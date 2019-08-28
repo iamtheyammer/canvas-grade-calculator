@@ -14,7 +14,11 @@ var router = getRouter()
 func getRouter() *httprouter.Router {
 	// init http server
 
-	router := httprouter.New()
+	router := &httprouter.Router{
+		RedirectTrailingSlash:  true,
+		HandleMethodNotAllowed: true,
+		HandleOPTIONS:          true,
+	}
 
 	router.GET("/", homeHandler)
 	router.GET("/api/canvas/outcomes/:outcomeID", canvasapis.GetOutcomeByIDHandler)
