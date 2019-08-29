@@ -86,7 +86,7 @@ func GetOutcomeResultsByCourseHandler(w http.ResponseWriter, r *http.Request, ps
 
 	userID := r.URL.Query().Get("userId")
 	if len(userID) < 1 {
-		util.SendBadRequest(w, "missing userId as param urlId")
+		util.SendBadRequest(w, "missing userId as param userId")
 		return
 	}
 
@@ -96,7 +96,40 @@ func GetOutcomeResultsByCourseHandler(w http.ResponseWriter, r *http.Request, ps
 		return
 	}
 
-	resp, body, err := services.GetOutcomeResultsByCourse(rd, courseID, userID)
+	includes := r.URL.Query().Get("include[]")
+
+	resp, body, err := services.GetOutcomeResultsByCourse(rd, courseID, userID, includes)
+	if err != nil {
+		util.SendInternalServerError(w)
+		return
+	}
+
+	util.HandleCanvasResponse(w, resp, body)
+	return
+}
+
+func GetOutcomeRollupsByCourseHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	courseID := ps.ByName("courseID")
+	if len(courseID) < 1 {
+		util.SendBadRequest(w, "missing courseID as url param")
+		return
+	}
+
+	userID := r.URL.Query().Get("userId")
+	if len(userID) < 1 {
+		util.SendBadRequest(w, "missing userId as param userId")
+		return
+	}
+
+	ok, rd := util.GetRequestDetailsFromRequest(r)
+	if !ok {
+		util.SendUnauthorized(w, "no canvas token")
+		return
+	}
+
+	includes := r.URL.Query().Get("include[]")
+
+	resp, body, err := services.GetOutcomeRollupsByCourse(rd, courseID, userID, includes)
 	if err != nil {
 		util.SendInternalServerError(w)
 		return

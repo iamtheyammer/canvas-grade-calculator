@@ -6,8 +6,6 @@ import (
 	"net/http"
 )
 
-
-
 func makeAuthenticatedGetRequest(url string, token string) (*http.Response, string, error) {
 	client := http.Client{}
 
@@ -30,5 +28,6 @@ func makeAuthenticatedGetRequest(url string, token string) (*http.Response, stri
 		return nil, "", err
 	}
 
+	//return resp, string(body), nil
 	return resp, string(body), nil
 }

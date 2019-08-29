@@ -30,6 +30,7 @@ func getRouter() *httprouter.Router {
 		canvasapis.GetOutcomesByCourseAndOutcomeGroupHandler,
 	)
 	router.GET("/api/canvas/courses/:courseID/outcome_results", canvasapis.GetOutcomeResultsByCourseHandler)
+	router.GET("/api/canvas/courses/:courseID/outcome_rollups", canvasapis.GetOutcomeRollupsByCourseHandler)
 
 	return router
 }
@@ -60,6 +61,6 @@ func (_ MiddlewareRouter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	mw := make(MiddlewareRouter)
-
+	fmt.Println("Canvas proxy running on port 8000")
 	log.Fatal(http.ListenAndServe(":8000", mw))
 }

@@ -41,6 +41,7 @@ func GetOutcomeResultsByCourse(
 	rd *util.RequestDetails,
 	courseID string,
 	userID string,
+	include string,
 ) (*http.Response, string, error) {
 	url := fmt.Sprintf(
 		"https://%s.instructure.com/api/v1/courses/%s/outcome_results?user_ids[]=%s",
@@ -48,5 +49,31 @@ func GetOutcomeResultsByCourse(
 		courseID,
 		userID,
 	)
+
+	if len(include) > 1 {
+		url = fmt.Sprintf("%s&include[]=%s", url, include)
+	}
+
+	return makeAuthenticatedGetRequest(url, rd.Token)
+}
+
+
+func GetOutcomeRollupsByCourse(
+	rd *util.RequestDetails,
+	courseID string,
+	userID string,
+	include string,
+) (*http.Response, string, error) {
+	url := fmt.Sprintf(
+		"https://%s.instructure.com/api/v1/courses/%s/outcome_rollups?user_ids[]=%s",
+		rd.Subdomain,
+		courseID,
+		userID,
+	)
+
+	if len(include) > 1 {
+		url = fmt.Sprintf("%s&include[]=%s", url, include)
+	}
+
 	return makeAuthenticatedGetRequest(url, rd.Token)
 }
