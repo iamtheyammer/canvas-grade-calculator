@@ -17,6 +17,11 @@ func GetOutcomeByIDHandler(w http.ResponseWriter, r *http.Request, ps httprouter
 		return
 	}
 
+	if !util.ValidateIntegerString(outcomeID) {
+		util.SendBadRequest(w, "invalid outcomeID")
+		return
+	}
+
 	ok, rd := util.GetRequestDetailsFromRequest(r)
 
 	if !ok {

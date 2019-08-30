@@ -3,6 +3,7 @@ package util
 import (
 	"github.com/iamtheyammer/canvas-grade-calculator/backend/src/env"
 	"regexp"
+	"strings"
 )
 
 var lowercaseStringRegex = regexp.MustCompile("[a-z]{1,64}")
@@ -34,4 +35,11 @@ func ValidateLowercaseString(req string) bool {
 // ValidateIntegerString validates that the string contains 1 to 32 numbers (no commas, periods, etc.).
 func ValidateIntegerString(req string) bool {
 	return numberRegex.FindString(req) == req
+}
+
+// ValidateIncludes makes sure that the includes param doesn't include any of ?, & or /.
+func ValidateIncludes(req string) bool {
+	return !(strings.Contains(req, "?") ||
+		strings.Contains(req, "&") ||
+		strings.Contains(req, "/"))
 }

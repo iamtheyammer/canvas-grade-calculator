@@ -31,6 +31,11 @@ func GetOutcomesByCourseHandler(w http.ResponseWriter, r *http.Request, ps httpr
 		return
 	}
 
+	if !util.ValidateIntegerString(courseID) {
+		util.SendBadRequest(w, "invalid courseID")
+		return
+	}
+
 	ok, rd := util.GetRequestDetailsFromRequest(r)
 	if !ok {
 		util.SendUnauthorized(w, "no canvas token")
@@ -55,9 +60,19 @@ func GetOutcomesByCourseAndOutcomeGroupHandler(w http.ResponseWriter, r *http.Re
 		return
 	}
 
+	if !util.ValidateIntegerString(courseID) {
+		util.SendBadRequest(w, "invalid courseID")
+		return
+	}
+
 	outcomeGroupID := ps.ByName("outcomeGroupID")
 	if len(outcomeGroupID) < 1 {
 		util.SendBadRequest(w, "missing outcomeGroupID as url param")
+		return
+	}
+
+	if !util.ValidateIntegerString(outcomeGroupID) {
+		util.SendBadRequest(w, "invalid outcomeGroupID")
 		return
 	}
 
@@ -84,9 +99,19 @@ func GetOutcomeResultsByCourseHandler(w http.ResponseWriter, r *http.Request, ps
 		return
 	}
 
+	if !util.ValidateIntegerString(courseID) {
+		util.SendBadRequest(w, "invalid courseID")
+		return
+	}
+
 	userID := r.URL.Query().Get("userId")
 	if len(userID) < 1 {
 		util.SendBadRequest(w, "missing userId as param userId")
+		return
+	}
+
+	if !util.ValidateIntegerString(userID) {
+		util.SendBadRequest(w, "invalid userID")
 		return
 	}
 
@@ -97,6 +122,13 @@ func GetOutcomeResultsByCourseHandler(w http.ResponseWriter, r *http.Request, ps
 	}
 
 	includes := r.URL.Query().Get("include[]")
+
+	if len(includes) > 1 {
+		if !util.ValidateIncludes(includes) {
+			util.SendBadRequest(w, "invalid includes")
+			return
+		}
+	}
 
 	resp, body, err := services.GetOutcomeResultsByCourse(rd, courseID, userID, includes)
 	if err != nil {
@@ -115,9 +147,19 @@ func GetOutcomeRollupsByCourseHandler(w http.ResponseWriter, r *http.Request, ps
 		return
 	}
 
+	if !util.ValidateIntegerString(courseID) {
+		util.SendBadRequest(w, "invalid courseID")
+		return
+	}
+
 	userID := r.URL.Query().Get("userId")
 	if len(userID) < 1 {
 		util.SendBadRequest(w, "missing userId as param userId")
+		return
+	}
+
+	if !util.ValidateIntegerString(userID) {
+		util.SendBadRequest(w, "invalid userId")
 		return
 	}
 
@@ -128,6 +170,13 @@ func GetOutcomeRollupsByCourseHandler(w http.ResponseWriter, r *http.Request, ps
 	}
 
 	includes := r.URL.Query().Get("include[]")
+
+	if len(includes) > 1 {
+		if !util.ValidateIncludes(includes) {
+			util.SendBadRequest(w, "invalid includes")
+			return
+		}
+	}
 
 	resp, body, err := services.GetOutcomeRollupsByCourse(rd, courseID, userID, includes)
 	if err != nil {
