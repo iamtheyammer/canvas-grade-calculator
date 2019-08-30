@@ -11,7 +11,7 @@ import (
 func GetCoursesHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	ok, rd := util.GetRequestDetailsFromRequest(r)
 	if !ok {
-		util.SendUnauthorized(w, "no canvas token")
+		util.SendUnauthorized(w, util.RequestDetailsFailedValidationMessage)
 		return
 	}
 
@@ -38,7 +38,7 @@ func GetOutcomesByCourseHandler(w http.ResponseWriter, r *http.Request, ps httpr
 
 	ok, rd := util.GetRequestDetailsFromRequest(r)
 	if !ok {
-		util.SendUnauthorized(w, "no canvas token")
+		util.SendUnauthorized(w, util.RequestDetailsFailedValidationMessage)
 		return
 	}
 
@@ -78,7 +78,7 @@ func GetOutcomesByCourseAndOutcomeGroupHandler(w http.ResponseWriter, r *http.Re
 
 	ok, rd := util.GetRequestDetailsFromRequest(r)
 	if !ok {
-		util.SendUnauthorized(w, "no canvas token")
+		util.SendUnauthorized(w, util.RequestDetailsFailedValidationMessage)
 		return
 	}
 
@@ -117,7 +117,7 @@ func GetOutcomeResultsByCourseHandler(w http.ResponseWriter, r *http.Request, ps
 
 	ok, rd := util.GetRequestDetailsFromRequest(r)
 	if !ok {
-		util.SendUnauthorized(w, "no canvas token")
+		util.SendUnauthorized(w, util.RequestDetailsFailedValidationMessage)
 		return
 	}
 
@@ -165,7 +165,7 @@ func GetOutcomeRollupsByCourseHandler(w http.ResponseWriter, r *http.Request, ps
 
 	ok, rd := util.GetRequestDetailsFromRequest(r)
 	if !ok {
-		util.SendUnauthorized(w, "no canvas token")
+		util.SendUnauthorized(w, util.RequestDetailsFailedValidationMessage)
 		return
 	}
 

@@ -25,7 +25,7 @@ func GetOutcomeByIDHandler(w http.ResponseWriter, r *http.Request, ps httprouter
 	ok, rd := util.GetRequestDetailsFromRequest(r)
 
 	if !ok {
-		util.SendUnauthorized(w, "no canvas token")
+		util.SendUnauthorized(w, util.RequestDetailsFailedValidationMessage)
 		return
 	}
 

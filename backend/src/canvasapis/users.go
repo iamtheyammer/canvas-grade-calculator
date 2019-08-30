@@ -10,7 +10,7 @@ import (
 func GetOwnUserProfileHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	ok, rd := util.GetRequestDetailsFromRequest(r)
 	if !ok {
-		util.SendUnauthorized(w, "no canvas token or invalid subdomain")
+		util.SendUnauthorized(w, util.RequestDetailsFailedValidationMessage)
 		return
 	}
 
