@@ -2,9 +2,14 @@ package util
 
 import (
 	"fmt"
+	"github.com/iamtheyammer/canvas-grade-calculator/backend/src/env"
 	"log"
 	"net/http"
+	"net/url"
+	"strings"
 )
+
+const RequestDetailsFailedValidationMessage = "no canvas token or subdomain not allowed"
 
 func GetRequestDetailsFromRequest(r *http.Request) (bool, *RequestDetails) {
 	var token, subdomain string
@@ -29,6 +34,14 @@ func GetRequestDetailsFromRequest(r *http.Request) (bool, *RequestDetails) {
 
 	// subdomain
 	subdomain = r.Header.Get("x-canvas-subdomain")
+
+	if len(subdomain) < 1 {
+		subdomain = env.DefaultSubdomain
+	}
+
+	if !ValidateSubdomain(subdomain) {
+		return false, nil
+	}
 
 	rd := NewRequestDetails(token, subdomain)
 
@@ -81,6 +94,17 @@ func SendNotFound(w http.ResponseWriter) {
 	return
 }
 
+func SendRedirect(w http.ResponseWriter, to string) {
+	w.Header().Set("Location", to)
+	w.WriteHeader(http.StatusFound)
+
+	_, err := fmt.Fprint(w, to)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return
+}
+
 func HandleCanvasResponse(w http.ResponseWriter, resp *http.Response, body string) {
 	sc := resp.StatusCode
 	if sc < 200 || sc > 399 {
@@ -94,6 +118,7 @@ func HandleCanvasResponse(w http.ResponseWriter, resp *http.Response, body strin
 func SendCanvasError(w http.ResponseWriter, resp *http.Response, efc string) {
 	w.Header().Set("X-Canvas-Status-Code", fmt.Sprintf("%d", resp.StatusCode))
 	w.Header().Set("X-Canvas-URL", resp.Request.URL.String())
+	w.Header().Set("Content-Type", resp.Header.Get("Content-Type"))
 	w.WriteHeader(http.StatusBadGateway)
 	_, err := fmt.Fprint(w, efc)
 	if err != nil {
@@ -103,6 +128,7 @@ func SendCanvasError(w http.ResponseWriter, resp *http.Response, efc string) {
 }
 
 func SendCanvasSuccess(w http.ResponseWriter, resp *http.Response, body string) {
+	w.Header().Set("X-Canvas-Status-Code", fmt.Sprintf("%d", resp.StatusCode))
 	w.Header().Set("X-Canvas-URL", resp.Request.URL.String())
 	w.Header().Set("Content-Type", resp.Header.Get("Content-Type"))
 	w.WriteHeader(http.StatusOK)
@@ -110,5 +136,37 @@ func SendCanvasSuccess(w http.ResponseWriter, resp *http.Response, body string) 
 	if err != nil {
 		log.Fatal(err)
 	}
+	return
+}
+
+func HandleCanvasOAuth2Response(w http.ResponseWriter, resp *http.Response, body string) {
+	redirectTo, err := url.Parse(env.OAuth2SuccessURI)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	q := redirectTo.Query()
+	if sc := resp.StatusCode; sc < 200 || sc > 399 {
+		q.Set("error", "proxy_canvas_error")
+		q.Set("error_source", "canvas_proxy")
+		q.Set("canvas_status_code", fmt.Sprintf("%d", resp.StatusCode))
+
+		// attempting JSON detection as Canvas sends text/html typed JSON with errors
+		if string(body[:2]) == "{\"" ||
+			strings.Contains(resp.Header.Get("content-type"), "application/json") {
+			q.Set("body", body)
+		} else {
+			q.Set("body", "html_omitted")
+		}
+	} else {
+		q.Set("canvas_response", body)
+		q.Set("subdomain", env.OAuth2Subdomain)
+	}
+	redirectTo.RawQuery = q.Encode()
+
+	SendRedirect(
+		w,
+		redirectTo.String(),
+	)
 	return
 }
