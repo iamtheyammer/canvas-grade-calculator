@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import v4 from 'uuid/v4';
 
 import {
@@ -22,7 +23,9 @@ const tableColumns = [
     title: 'Class Name',
     dataIndex: 'name',
     key: 'name',
-    render: text => <a>{text}</a>,
+    render: (text, record) => record.grade === 'N/A' ?
+      text :
+      <Link to={`/dashboard/grades/${record.id}`}>{text}</Link>,
   },
   {
     title: 'Class ID',
@@ -71,7 +74,7 @@ class Grades extends Component {
       this.props.dispatch(getUserCourses(getUserCoursesId, this.props.token, this.props.subdomain));
     } else if (!this.props.outcomeRollups) {
       const ids = [];
-      this.props.courses.forEach(c => {
+      getActiveCourses(this.props.courses).forEach(c => {
         const getOutcomeRollupsForCourseId = v4();
         ids.push(getOutcomeRollupsForCourseId);
         this.props.dispatch(getOutcomeRollupsForCourse(
@@ -111,13 +114,17 @@ class Grades extends Component {
     const data = activeCourses.map(c => ({
       key: c.id,
       name: c.name,
-      grade: grades[c.id],
+      grade: grades[c.id].grade,
       id: c.id
     }));
 
     return(
       <div>
         <Typography.Title level={2}>Grades</Typography.Title>
+        <Typography.Text type="secondary">
+          If you have a grade in a class, click on the name to see a detailed breakdown of your grade.
+        </Typography.Text>
+        <div style={{ marginBottom: '12px' }} />
         <Table
           columns={tableColumns}
           dataSource={data}

@@ -9,11 +9,9 @@ export default (outcomeRollups) => {
     // array of outcomes for a specified class
     const scores = rollup[0].scores.map(s => s.score);
 
-    const grade = scores.length > 0 ?
+    grades[i] = scores.length > 0 ?
       getGradeFromOutcomes(scores) :
-      'N/A';
-
-    grades[i] = grade;
+      { grade: 'N/A' };
   });
 
   return grades;
@@ -57,13 +55,19 @@ function getGradeFromOutcomes(outcomes) {
     }
 
     // student is eligible for this grade
-    return grade;
+    return {
+      grade,
+      sortedOutcomes,
+      countedOutcomes,
+      lowestCountedOutcome,
+      lowestOutcome
+    };
   }
 
   // we should never reach this point-- it would require a negative outcome
 }
 
-const gradeMap = [
+export const gradeMap = [
   [ 'A', [ 3.5, 3 ] ],
   [ 'A-', [ 3.5, 2.5 ] ],
   [ 'B+', [ 3, 2.5 ] ],
@@ -72,3 +76,13 @@ const gradeMap = [
   [ 'C', [ 2.5, 2 ] ],
   [ 'I', [ 0, 0 ] ]
 ];
+
+export const gradeMapByGrade = {
+  'A': { max: 3.5, min: 3 },
+  'A-': { max: 3.5, min: 2.5 },
+  'B+': { max: 3, min: 2.5 },
+  'B': { max: 3, min: 2.25 },
+  'B-': { max: 3, min: 2 },
+  'C': { max: 2.5, min: 2 },
+  'I': { max: 0, min: 0 }
+};

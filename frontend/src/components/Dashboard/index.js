@@ -1,20 +1,34 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Switch, Route, Redirect } from 'react-router-dom';
+import { Switch, Route, Redirect, Link } from 'react-router-dom';
 
 import {
-  Layout
+  Layout,
+  Breadcrumb
 } from 'antd';
 
 import DashboardNav from './DashboardNav';
 import ConnectedUserProfile from './UserProfile';
 import ConnectedGrades from './Grades';
+import ConnectedGradeBreakdown from './GradeBreakdown';
 import ConnectedLogout from './Logout';
 
 const {
   Content,
   Footer
 } = Layout;
+
+const getBreadcrumbNameMap = (courses = []) => {
+  const routes = {
+    '/dashboard': 'Dashboard',
+    '/dashboard/profile': 'Profile',
+    '/dashboard/grades': 'Grades',
+  };
+
+  courses.forEach(c => routes[`/dashboard/grades/${c.id}`] = `Grade Breakdown for ${c.name}`);
+
+  return routes;
+};
 
 function Dashboard(props) {
   const { token } = props;
@@ -25,15 +39,29 @@ function Dashboard(props) {
     );
   }
 
+  const { location } = props;
+  const pathSnippets = location.pathname.split('/').filter(i => i);
+  const breadcrumbNameMap = getBreadcrumbNameMap(props.courses || []);
+  const breadcrumbItems = pathSnippets.map((_, index) => {
+    const url = `/${pathSnippets.slice(0, index + 1).join('/')}`;
+    return (
+      <Breadcrumb.Item key={url}>
+        <Link to={url}>{breadcrumbNameMap[url]}</Link>
+      </Breadcrumb.Item>
+    );
+  });
+
   return (
     <Layout className="layout">
       <DashboardNav />
       <Content style={{ padding: '0 50px' }}>
-        <div style={{ background: '#fff', padding: 24, marginTop: 48, minHeight: 280 }}>
+        <Breadcrumb style={{ marginTop: 12 }}>{breadcrumbItems}</Breadcrumb>
+        <div style={{ background: '#fff', padding: 24, marginTop: 12, minHeight: 280 }}>
           <Switch>
             <Route exact path="/dashboard" render={() => <Redirect to="/dashboard/profile"/>} />
             <Route exact path="/dashboard/profile" component={ConnectedUserProfile}/>
             <Route exact path="/dashboard/grades" component={ConnectedGrades} />
+            <Route exact path="/dashboard/grades/:courseId" component={ConnectedGradeBreakdown} />
             <Route exact path="/dashboard/logout" component={ConnectedLogout} />
           </Switch>
         </div>
@@ -44,7 +72,8 @@ function Dashboard(props) {
 }
 
 const ConnectedDashboard = connect(state => ({
-  token: state.canvas.token
+  token: state.canvas.token,
+  courses: state.canvas.courses
 }))(Dashboard);
 
 export default ConnectedDashboard;

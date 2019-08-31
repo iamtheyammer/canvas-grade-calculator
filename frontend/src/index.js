@@ -10,7 +10,6 @@ import middlewares from './middleware/index';
 
 const store = createStore(reducers, middlewares);
 
-
 ReactDOM.render(
   <Provider store={store}>
     <ConnectedApp />
