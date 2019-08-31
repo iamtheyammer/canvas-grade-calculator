@@ -77,6 +77,6 @@ func OAuth2RefreshTokenHandler(w http.ResponseWriter, r *http.Request, _ httprou
 		return
 	}
 
-	util.HandleCanvasOAuth2Response(w, resp, body)
+	util.HandleCanvasResponse(w, resp, body)
 	return
 }

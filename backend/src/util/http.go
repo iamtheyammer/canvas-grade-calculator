@@ -117,7 +117,13 @@ func HandleCanvasResponse(w http.ResponseWriter, resp *http.Response, body strin
 
 func SendCanvasError(w http.ResponseWriter, resp *http.Response, efc string) {
 	w.Header().Set("X-Canvas-Status-Code", fmt.Sprintf("%d", resp.StatusCode))
-	w.Header().Set("X-Canvas-URL", resp.Request.URL.String())
+
+	if reqURL := resp.Request.URL.String(); !strings.Contains(reqURL, env.OAuth2ClientSecret) {
+		w.Header().Set("X-Canvas-URL", reqURL)
+	} else {
+		w.Header().Set("X-Canvas-URL", "omitted")
+	}
+
 	w.Header().Set("Content-Type", resp.Header.Get("Content-Type"))
 	w.WriteHeader(http.StatusBadGateway)
 	_, err := fmt.Fprint(w, efc)
@@ -129,7 +135,13 @@ func SendCanvasError(w http.ResponseWriter, resp *http.Response, efc string) {
 
 func SendCanvasSuccess(w http.ResponseWriter, resp *http.Response, body string) {
 	w.Header().Set("X-Canvas-Status-Code", fmt.Sprintf("%d", resp.StatusCode))
-	w.Header().Set("X-Canvas-URL", resp.Request.URL.String())
+
+	if reqURL := resp.Request.URL.String(); !strings.Contains(reqURL, env.OAuth2ClientSecret) {
+		w.Header().Set("X-Canvas-URL", reqURL)
+	} else {
+		w.Header().Set("X-Canvas-URL", "omitted")
+	}
+
 	w.Header().Set("Content-Type", resp.Header.Get("Content-Type"))
 	w.WriteHeader(http.StatusOK)
 	_, err := fmt.Fprint(w, body)
