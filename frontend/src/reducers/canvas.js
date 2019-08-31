@@ -1,6 +1,7 @@
 import {
   CANVAS_LOGOUT,
   CANVAS_FETCH_USER,
+  CANVAS_GOT_USER_OAUTH,
   CANVAS_GET_USER_TOKEN,
   CANVAS_GET_USER_PROFILE_ERROR,
   CANVAS_GOT_USER_PROFILE,
@@ -23,6 +24,12 @@ export default function canvas(state = {}, action) {
         ...{
           token: action.token
         }
+      };
+    case CANVAS_GOT_USER_OAUTH:
+      return {
+        ...state,
+        token: action.token,
+        refreshToken: action.refreshToken
       };
     case CANVAS_GET_USER_PROFILE_ERROR:
       return {

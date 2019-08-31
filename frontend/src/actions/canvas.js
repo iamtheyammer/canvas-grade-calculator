@@ -4,6 +4,8 @@ export const CANVAS_LOGOUT = 'CANVAS_LOGOUT';
 
 export const CANVAS_FETCH_USER = 'CANVAS_FETCH_USER';
 export const CANVAS_GET_USER_TOKEN = 'CANVAS_GET_USER_TOKEN';
+export const CANVAS_GOT_USER_OAUTH = 'CANVAS_GOT_USER_OAUTH';
+
 export const CANVAS_GOT_USER_SUBDOMAIN = 'CANVAS_GOT_USER_SUBDOMAIN';
 export const CANVAS_GOT_USER_PROFILE = 'CANVAS_GOT_USER_PROFILE';
 export const CANVAS_GET_USER_PROFILE_ERROR = 'CANVAS_GET_USER_PROFILE_ERROR';
@@ -30,6 +32,16 @@ export function getUserToken(token) {
   return {
     type: CANVAS_GET_USER_TOKEN,
     token
+  }
+}
+
+export function gotUserOAuth(token, refreshToken) {
+  localStorage.token = token;
+  localStorage.refreshToken = refreshToken;
+  return {
+    type: CANVAS_GOT_USER_OAUTH,
+    token,
+    refreshToken
   }
 }
 

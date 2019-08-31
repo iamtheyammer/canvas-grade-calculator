@@ -13,6 +13,7 @@ import NoAuthNav from './components/NoAuthNav';
 
 import ConnectedHome from './components/Home';
 import ConnectedTokenEntry from './components/TokenEntry';
+import ConnectedOAuth2Response from './components/OAuth2Response';
 
 import Dashboard from './components/Dashboard';
 
@@ -35,7 +36,8 @@ class App extends Component {
 
         {/* routes */}
         <Route exact path="/" component={ConnectedHome} />
-        <Route path="/tokenEntry" component={ConnectedTokenEntry} />
+        <Route exact path="/tokenEntry" component={ConnectedTokenEntry} />
+        <Route exact path="/oauth2response" component={ConnectedOAuth2Response} />
         <Switch>
           <Route path="/dashboard" component={Dashboard} />
         </Switch>
