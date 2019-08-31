@@ -12,8 +12,6 @@ import {
 function OAuth2Response(props) {
   const query = parse(props.location.search.slice(1, props.location.search.length));
 
-  // debugger;
-
   if(query.error || !query.canvas_response) {
     if(query.error === 'access_denied') {
       // user said no. redirect to home.
@@ -22,7 +20,11 @@ function OAuth2Response(props) {
 
     if(query.error === 'proxy_canvas_error') {
       // unknown error
-      alert('There was an unknown error logging you in. Please try again later.');
+      notification.error({
+        message: 'Unknown Error',
+        duration: 0,
+        description: 'There was an unknown error logging you in with Canvas. Try again later.'
+      });
       return <Redirect to="/" />
     }
   }
@@ -37,7 +39,7 @@ function OAuth2Response(props) {
     description: `Welcome, ${canvasResponse.user.name.split(' ')[0]}! You've successfully logged in with Canvas.`
   });
 
-  return <Redirect to="/dashboard/courses" />
+  return <Redirect to="/dashboard" />
 }
 
 const ConnectedOAuth2Response = connect(state => ({

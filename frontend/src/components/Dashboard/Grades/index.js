@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import v4 from 'uuid/v4';
 
 import {
   Spin,
@@ -36,6 +37,15 @@ const tableColumns = [
 ];
 
 class Grades extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      getUserId: '',
+      getUserCoursesId: '',
+      getOutcomeRollupsForCourseIds: []
+    }
+  }
+
   componentDidMount() {
     this.loadData();
   }
@@ -45,31 +55,58 @@ class Grades extends Component {
   }
 
   loadData = () => {
+    // if anything from this component is loading, let it load!
+    const allLoading = [this.state.getUserId, this.state.getUserCoursesId, ...this.state.getOutcomeRollupsForCourseIds];
+    if(this.props.loading.some(l => allLoading.includes(l))) {
+      return;
+    }
+
     if(!this.props.user) {
-      this.props.dispatch(getUser(this.props.token, this.props.subdomain));
+      const getUserId = v4();
+      this.setState({ getUserId });
+      this.props.dispatch(getUser(getUserId, this.props.token, this.props.subdomain));
     } else if (!this.props.courses) {
-      this.props.dispatch(getUserCourses(this.props.token, this.props.subdomain));
-    } else if (!this.props.outcomes) {
+      const getUserCoursesId = v4();
+      this.setState({ getUserCoursesId });
+      this.props.dispatch(getUserCourses(getUserCoursesId, this.props.token, this.props.subdomain));
+    } else if (!this.props.outcomeRollups) {
+      const ids = [];
       this.props.courses.forEach(c => {
+        const getOutcomeRollupsForCourseId = v4();
+        ids.push(getOutcomeRollupsForCourseId);
         this.props.dispatch(getOutcomeRollupsForCourse(
-          this.props.user.id, c.id, this.props.token, this.props.subdomain
+          getOutcomeRollupsForCourseId, this.props.user.id, c.id, this.props.token, this.props.subdomain
         ))
+      });
+      this.setState({
+        getOutcomeRollupsForCourseIds:
+          this.state.getOutcomeRollupsForCourseIds.concat(ids)
       });
     }
   };
 
   render() {
-    if(!this.props.outcomeRollups || !this.props.courses) {
+    const { loading, outcomeRollups, courses} = this.props;
+
+    if(
+      !outcomeRollups ||
+      loading.includes(this.state.getUserId) ||
+      loading.includes(this.state.getUserCoursesId) ||
+      loading.some(l => this.state.getOutcomeRollupsForCourseIds.includes(l))
+    ) {
       return(
-        <div align="center">
-          <Spin size="large"/>
-          <Typography.Title level={2}>Loading (this might take a minute!)...</Typography.Title>
+        <div>
+          <Typography.Title level={2}>Grades</Typography.Title>
+          <Table
+            columns={tableColumns}
+            loading={true}
+          />
         </div>
       )
     }
 
-    const grades = calculateGradeFromOutcomes(this.props.outcomeRollups);
-    const activeCourses = getActiveCourses(this.props.courses);
+    const grades = calculateGradeFromOutcomes(outcomeRollups);
+    const activeCourses = getActiveCourses(courses);
 
     const data = activeCourses.map(c => ({
       key: c.id,
@@ -97,7 +134,9 @@ const ConnectedGrades = connect(state => ({
   outcomeRollups: state.canvas.outcomeRollups,
   user: state.canvas.user,
   token: state.canvas.token,
-  subdomain: state.canvas.subdomain
+  subdomain: state.canvas.subdomain,
+  errors: state.error,
+  loading: state.loading
 }))(Grades);
 
 export default ConnectedGrades;

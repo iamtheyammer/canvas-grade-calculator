@@ -1,5 +1,12 @@
 import makeCanvasRequest from '../util/canvas/makeCanvasRequest';
 
+import { canvasProxyError } from './error';
+
+import {
+  startLoading,
+  endLoading
+} from './loading';
+
 export const CANVAS_LOGOUT = 'CANVAS_LOGOUT';
 
 export const CANVAS_FETCH_USER = 'CANVAS_FETCH_USER';
@@ -60,25 +67,20 @@ function gotUser(user) {
   }
 }
 
-function getUserError(error) {
-  return {
-    type: CANVAS_GET_USER_PROFILE_ERROR,
-    error
-  }
-}
-
-export function getUser(token, subdomain) {
+export function getUser(id, token, subdomain) {
   return async dispatch => {
+    dispatch(startLoading(id));
     try {
       const userRes = await makeCanvasRequest(
         'users/profile/self',
         token,
         subdomain
-      )
-      return dispatch(gotUser(userRes.data))
-    } catch(e) {
-      return dispatch(getUserError(e));
+      );
+      dispatch(gotUser(userRes.data))
+    } catch (e) {
+      dispatch(canvasProxyError(id, e.response));
     }
+    dispatch(endLoading(id));
   }
 }
 
@@ -96,18 +98,20 @@ function getUserCoursesError(error) {
   }
 }
 
-export function getUserCourses(token, subdomain) {
+export function getUserCourses(id, token, subdomain) {
   return async dispatch => {
+    dispatch(startLoading(id));
     try {
       const userRes = await makeCanvasRequest(
         'courses',
         token,
         subdomain
       );
-      return dispatch(gotUserCourses(userRes.data))
+      dispatch(gotUserCourses(userRes.data))
     } catch(e) {
-      return dispatch(getUserCoursesError(e));
+      dispatch(canvasProxyError(id, e.response));
     }
+    dispatch(endLoading(id));
   }
 }
 
@@ -127,8 +131,9 @@ function getOutcomeRollupsForCourseError(error) {
   }
 }
 
-export function getOutcomeRollupsForCourse(userId, courseId, token, subdomain) {
+export function getOutcomeRollupsForCourse(id, userId, courseId, token, subdomain) {
   return async dispatch => {
+    dispatch(startLoading(id));
     try {
       const outcomeResults = await makeCanvasRequest(
         `courses/${courseId}/outcome_rollups`,
@@ -139,7 +144,7 @@ export function getOutcomeRollupsForCourse(userId, courseId, token, subdomain) {
           userId
         }
       );
-      return dispatch(gotOutcomeRollupsForCourse(
+      dispatch(gotOutcomeRollupsForCourse(
         outcomeResults.data.rollups,
         outcomeResults.data.linked['"outcomes"'],
         courseId
@@ -147,6 +152,7 @@ export function getOutcomeRollupsForCourse(userId, courseId, token, subdomain) {
     } catch (e) {
       dispatch(getOutcomeRollupsForCourseError(e));
     }
+    dispatch(endLoading(id));
   }
 }
 

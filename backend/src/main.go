@@ -60,6 +60,7 @@ func (_ MiddlewareRouter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// apply CORS headers
 	w.Header().Set("Access-Control-Allow-Origin", env.ProxyAllowedCORSOrigins)
 	w.Header().Set("Access-Control-Allow-Headers", "X-Canvas-Token, X-Canvas-Subdomain")
+	w.Header().Set("Access-Control-Expose-Headers", "X-Canvas-Url, X-Canvas-Status-Code")
 
 	router.ServeHTTP(w, r)
 }
