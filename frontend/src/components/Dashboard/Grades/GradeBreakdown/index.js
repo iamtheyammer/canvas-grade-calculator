@@ -11,14 +11,13 @@ import {
   Col,
   Card,
   Button,
-  Popover,
   Table
 } from 'antd';
 
-import { getUserCourses } from '../../../actions/canvas';
-import calculateGradeFromOutcomes, { gradeMapByGrade } from '../../../util/canvas/calculateGradeFromOutcomes';
+import { getUserCourses } from '../../../../actions/canvas';
+import calculateGradeFromOutcomes, { gradeMapByGrade } from '../../../../util/canvas/calculateGradeFromOutcomes';
 
-import { desc } from '../../../util/stringSorter';
+import { desc } from '../../../../util/stringSorter';
 
 const outcomeTableColumns = [
   {

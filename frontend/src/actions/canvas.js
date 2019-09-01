@@ -9,22 +9,17 @@ import {
 
 export const CANVAS_LOGOUT = 'CANVAS_LOGOUT';
 
-export const CANVAS_FETCH_USER = 'CANVAS_FETCH_USER';
 export const CANVAS_GET_USER_TOKEN = 'CANVAS_GET_USER_TOKEN';
 export const CANVAS_GOT_USER_OAUTH = 'CANVAS_GOT_USER_OAUTH';
 
 export const CANVAS_GOT_USER_SUBDOMAIN = 'CANVAS_GOT_USER_SUBDOMAIN';
 export const CANVAS_GOT_USER_PROFILE = 'CANVAS_GOT_USER_PROFILE';
-export const CANVAS_GET_USER_PROFILE_ERROR = 'CANVAS_GET_USER_PROFILE_ERROR';
 
 export const CANVAS_GOT_USER_COURSES = 'CANVAS_GOT_USER_COURSES';
-export const CANVAS_GET_USER_COURSES_ERROR = 'CANVAS_GET_USER_COURSES_ERROR';
 
 export const CANVAS_GOT_OUTCOMES_FOR_COURSE = 'CANVAS_GOT_OUTCOME_ROLLUPS_FOR_COURSE';
-export const CANVAS_GET_OUTCOMES_FOR_COURSE_ERROR = 'CANVAS_GET_OUTCOMES_FOR_COURSE_ERROR';
 
 export const CANVAS_GOT_OUTCOME_ROLLUPS_FOR_COURSE = 'CANVAS_GOT_OUTCOME_ROLLUPS_FOR_COURSE';
-export const CANVAS_GET_OUTCOME_ROLLUPS_FOR_COURSE_ERROR = 'CANVAS_GET_OUTCOME_ROLLUPS_FOR_COURSE_ERROR';
 
 export function logout() {
   localStorage.token = '';
@@ -91,13 +86,6 @@ function gotUserCourses(courses) {
   }
 }
 
-function getUserCoursesError(error) {
-  return {
-    type: CANVAS_GET_USER_COURSES_ERROR,
-    error
-  }
-}
-
 export function getUserCourses(id, token, subdomain) {
   return async dispatch => {
     dispatch(startLoading(id));
@@ -124,13 +112,6 @@ function gotOutcomeRollupsForCourse(results, outcomes, courseId) {
   }
 }
 
-function getOutcomeRollupsForCourseError(error) {
-  return {
-    type: CANVAS_GET_OUTCOME_ROLLUPS_FOR_COURSE_ERROR,
-    error
-  }
-}
-
 export function getOutcomeRollupsForCourse(id, userId, courseId, token, subdomain) {
   return async dispatch => {
     dispatch(startLoading(id));
@@ -150,7 +131,7 @@ export function getOutcomeRollupsForCourse(id, userId, courseId, token, subdomai
         courseId
       ))
     } catch (e) {
-      dispatch(getOutcomeRollupsForCourseError(e));
+      dispatch(canvasProxyError(id, e.response));
     }
     dispatch(endLoading(id));
   }
@@ -164,15 +145,9 @@ function gotOutcomesForCourse(results, outcomes) {
   }
 }
 
-function getOutcomesForCourseError(error) {
-  return {
-    type: CANVAS_GET_OUTCOMES_FOR_COURSE_ERROR,
-    error
-  }
-}
-
-export function getOutcomesForCourse(userId, courseId, token, subdomain) {
+export function getOutcomesForCourse(id, userId, courseId, token, subdomain) {
   return async dispatch => {
+    dispatch(startLoading(id));
     try {
       const outcomeResults = await makeCanvasRequest(
         `courses/${courseId}/outcome_results`,
@@ -183,13 +158,14 @@ export function getOutcomesForCourse(userId, courseId, token, subdomain) {
           userId
         }
       );
-      return dispatch(gotOutcomesForCourse(
+      dispatch(gotOutcomesForCourse(
         outcomeResults.data.outcome_results,
         outcomeResults.data.linked['"outcomes"'],
         courseId
       ))
     } catch (e) {
-      dispatch(getOutcomesForCourseError(e));
+      dispatch(canvasProxyError(id, e.response));
     }
+    dispatch(endLoading(id));
   }
 }

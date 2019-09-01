@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import v4 from 'uuid/v4';
 
 import {
-  Spin,
   Typography,
   Table
 } from 'antd';
@@ -17,6 +16,7 @@ import {
 
 import calculateGradeFromOutcomes from '../../../util/canvas/calculateGradeFromOutcomes';
 import getActiveCourses from '../../../util/canvas/getActiveCourses';
+import ErrorModal from '../ErrorModal';
 
 const tableColumns = [
   {
@@ -57,9 +57,13 @@ class Grades extends Component {
     this.loadData();
   }
 
+  getAllIds = () =>
+    ([this.state.getUserId, this.state.getUserCoursesId, ...this.state.getOutcomeRollupsForCourseIds]);
+
   loadData = () => {
     // if anything from this component is loading, let it load!
-    const allLoading = [this.state.getUserId, this.state.getUserCoursesId, ...this.state.getOutcomeRollupsForCourseIds];
+    const allLoading = this.getAllIds();
+
     if(this.props.loading.some(l => allLoading.includes(l))) {
       return;
     }
@@ -89,14 +93,10 @@ class Grades extends Component {
   };
 
   render() {
-    const { loading, outcomeRollups, courses} = this.props;
+    const { loading, outcomeRollups, courses, errors } = this.props;
+    const allIds = this.getAllIds();
 
-    if(
-      !outcomeRollups ||
-      loading.includes(this.state.getUserId) ||
-      loading.includes(this.state.getUserCoursesId) ||
-      loading.some(l => this.state.getOutcomeRollupsForCourseIds.includes(l))
-    ) {
+    if(loading.some(l => allIds.includes(l)) || !outcomeRollups) {
       return(
         <div>
           <Typography.Title level={2}>Grades</Typography.Title>
@@ -106,6 +106,11 @@ class Grades extends Component {
           />
         </div>
       )
+    }
+
+    const erroredIds = Object.keys(errors).filter(l => allIds.includes(l));
+    if(erroredIds.length > 0) {
+      return <ErrorModal res={errors[erroredIds[0]]} />
     }
 
     const grades = calculateGradeFromOutcomes(outcomeRollups);

@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import './index.css';
 import {
@@ -13,7 +13,7 @@ const {
 function DashboardNav() {
   return(
     <Header>
-      <div className="logo"></div>
+      <div className="logo"/>
       <Menu
         theme="dark"
         mode="horizontal"

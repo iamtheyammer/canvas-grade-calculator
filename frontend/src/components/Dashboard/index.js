@@ -10,7 +10,7 @@ import {
 import DashboardNav from './DashboardNav';
 import ConnectedUserProfile from './UserProfile';
 import ConnectedGrades from './Grades';
-import ConnectedGradeBreakdown from './GradeBreakdown';
+import ConnectedGradeBreakdown from './Grades/GradeBreakdown';
 import ConnectedLogout from './Logout';
 
 const {
