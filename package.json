@@ -1,0 +1,9 @@
+{
+  "name": "canvas-grade-calculator-heroku",
+  "version": "0.0.0",
+  "description": "this is here because heroku requires a package.json in the root dir",
+  "dependencies": {},
+  "scripts": {
+    "build": "cd frontend && npm run build"
+  }
+}
