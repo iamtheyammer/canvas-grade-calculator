@@ -7,7 +7,7 @@ import {
   Button
 } from 'antd';
 
-import { getUserToken, gotUserSubdomain } from '../../actions/canvas';
+import { gotUserTokenEntry } from '../../actions/canvas';
 
 class TokenEntry extends Component {
   constructor(props) {
@@ -29,8 +29,7 @@ class TokenEntry extends Component {
   onSubmit = (e) => {
     e.preventDefault();
 
-    this.props.dispatch(getUserToken(this.state.token));
-    this.props.dispatch(gotUserSubdomain(this.state.subdomain));
+    this.props.dispatch(gotUserTokenEntry(this.state.token, this.state.subdomain));
 
     notification.success({
       message: 'Success!',

@@ -5,8 +5,7 @@ import { Redirect } from 'react-router-dom';
 import { notification } from 'antd';
 
 import {
-  gotUserOAuth,
-  gotUserSubdomain
+  gotUserOAuth
 } from '../../actions/canvas';
 
 function OAuth2Response(props) {
@@ -29,10 +28,8 @@ function OAuth2Response(props) {
     }
   }
 
-  props.dispatch(gotUserSubdomain(query.subdomain));
-
   const canvasResponse = JSON.parse(query.canvas_response);
-  props.dispatch(gotUserOAuth(canvasResponse.access_token, canvasResponse.refresh_token));
+  props.dispatch(gotUserOAuth(canvasResponse.access_token, canvasResponse.refresh_token, query.subdomain));
 
   notification.success({
     message: 'Success!',

@@ -1,10 +1,9 @@
 import {
   CANVAS_LOGOUT,
   CANVAS_GOT_USER_OAUTH,
-  CANVAS_GET_USER_TOKEN,
+  CANVAS_GOT_TOKEN_ENTRY,
   CANVAS_GOT_USER_PROFILE,
   CANVAS_GOT_USER_COURSES,
-  CANVAS_GOT_USER_SUBDOMAIN,
   CANVAS_GOT_OUTCOME_ROLLUPS_FOR_COURSE,
   CANVAS_GOT_OUTCOMES_FOR_COURSE
 } from '../actions/canvas';
@@ -13,18 +12,20 @@ export default function canvas(state = {}, action) {
   switch(action.type) {
     case CANVAS_LOGOUT:
       return {};
-    case CANVAS_GET_USER_TOKEN:
+    case CANVAS_GOT_TOKEN_ENTRY:
       return {
         ...state,
         ...{
-          token: action.token
+          token: action.token,
+          subdomain: action.subdomain
         }
       };
     case CANVAS_GOT_USER_OAUTH:
       return {
         ...state,
         token: action.token,
-        refreshToken: action.refreshToken
+        refreshToken: action.refreshToken,
+        subdomain: action.subdomain
       };
     case CANVAS_GOT_USER_PROFILE:
       return {
@@ -35,11 +36,6 @@ export default function canvas(state = {}, action) {
       return {
         ...state,
         courses: action.courses
-      };
-    case CANVAS_GOT_USER_SUBDOMAIN:
-      return {
-        ...state,
-        subdomain: action.subdomain
       };
     case CANVAS_GOT_OUTCOME_ROLLUPS_FOR_COURSE:
       const test = action.courseId;

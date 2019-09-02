@@ -9,7 +9,7 @@ import {
 
 export const CANVAS_LOGOUT = 'CANVAS_LOGOUT';
 
-export const CANVAS_GET_USER_TOKEN = 'CANVAS_GET_USER_TOKEN';
+export const CANVAS_GOT_TOKEN_ENTRY = 'CANVAS_GOT_TOKEN_ENTRY';
 export const CANVAS_GOT_USER_OAUTH = 'CANVAS_GOT_USER_OAUTH';
 
 export const CANVAS_GOT_USER_SUBDOMAIN = 'CANVAS_GOT_USER_SUBDOMAIN';
@@ -24,33 +24,29 @@ export const CANVAS_GOT_OUTCOME_ROLLUPS_FOR_COURSE = 'CANVAS_GOT_OUTCOME_ROLLUPS
 export function logout() {
   localStorage.token = '';
   localStorage.subdomain = '';
+  localStorage.refreshToken = '';
   return {
     type: CANVAS_LOGOUT
   }
 }
 
-export function getUserToken(token) {
+export function gotUserTokenEntry(token, subdomain) {
   localStorage.token = token;
+  localStorage.subdomain = subdomain;
   return {
-    type: CANVAS_GET_USER_TOKEN,
-    token
+    type: CANVAS_GOT_TOKEN_ENTRY,
+    token,
+    subdomain
   }
 }
 
-export function gotUserOAuth(token, refreshToken) {
+export function gotUserOAuth(token, refreshToken, subdomain) {
   localStorage.token = token;
   localStorage.refreshToken = refreshToken;
   return {
     type: CANVAS_GOT_USER_OAUTH,
     token,
-    refreshToken
-  }
-}
-
-export function gotUserSubdomain(subdomain) {
-  localStorage.subdomain = subdomain;
-  return {
-    type: CANVAS_GOT_USER_SUBDOMAIN,
+    refreshToken,
     subdomain
   }
 }
