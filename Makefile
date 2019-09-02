@@ -1,6 +1,4 @@
 herokunode:
-	rm -rf bin/;
-	mkdir bin;
 	if [ ! -d "frontend/node_modules" ]; then cd frontend && npm i; fi;
 	cd frontend && npm run build;
 	mv ./frontend/build ./bin;
