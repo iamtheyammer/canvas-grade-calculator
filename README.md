@@ -7,3 +7,13 @@ To do so, it contains a Golang proxy to add CORS headers to Canvas's API and han
 See the [Backend README](backend/README.md) and [Frontend README](frontend/README.md) for more information.
 
 You can also check out [img/](img/) for some screenshots.
+
+# Running on Heroku
+
+Ready to run! Clone the repo and follow Heroku's instructions.
+
+## Heroku Build Process
+
+1. Heroku builds the go executable to `bin/src` (where `src` is the actual executable)
+2. Heroku runs the build step in `/package.json` - runs `make herokunode` (installs frontend packages, builds frontend, copies static files to `bin/build`)
+3. Heroku runs `web`, declared in the Procfile.

@@ -9,6 +9,7 @@ import toc from '../../util/getTermsAndConditions';
 import {
   Card, Typography, Button, Checkbox, Modal
 } from 'antd';
+import getUrlPrefix from '../../util/getUrlPrefix';
 
 function Home(props) {
   const [ enableSignin, setEnableSignin ] = useState(false);
@@ -51,7 +52,7 @@ function Home(props) {
             size={!enableSignin ? "default" : "large"}
             className="center button"
             disabled={!enableSignin}
-            onClick={() => window.location.href = 'http://localhost:8000/api/canvas/oauth2/request'}
+            onClick={() => window.location.href = `${getUrlPrefix}/api/canvas/oauth2/request`}
           >
             Sign in with Canvas
           </Button>

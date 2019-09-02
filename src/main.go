@@ -7,9 +7,11 @@ import (
 	"github.com/julienschmidt/httprouter"
 	"log"
 	"net/http"
+	"strings"
 )
 
 var router = getRouter()
+var staticRouter = getStaticRouter()
 
 func getRouter() *httprouter.Router {
 	// init http server
@@ -35,7 +37,13 @@ func getRouter() *httprouter.Router {
 	router.GET("/api/canvas/oauth2/response", canvasapis.OAuth2ResponseHandler)
 	router.GET("/api/canvas/oauth2/refresh_token", canvasapis.OAuth2RefreshTokenHandler)
 
-	router.NotFound = http.FileServer(http.Dir("./build"))
+	return router
+}
+
+func getStaticRouter() *httprouter.Router {
+	router := httprouter.New()
+
+	router.ServeFiles("/*filepath", http.Dir("./build"))
 
 	return router
 }
@@ -43,6 +51,12 @@ func getRouter() *httprouter.Router {
 type MiddlewareRouter map[string]string
 
 func (_ MiddlewareRouter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	// handle serving react static
+	if !strings.HasPrefix(r.URL.Path, "/api/") {
+		staticRouter.ServeHTTP(w, r)
+		return
+	}
+
 	// apply CORS headers
 	w.Header().Set("Access-Control-Allow-Origin", env.ProxyAllowedCORSOrigins)
 	w.Header().Set("Access-Control-Allow-Headers", "X-Canvas-Token, X-Canvas-Subdomain")
