@@ -1,1 +1,1 @@
-web: ./bin/canvasProxy
+web: ./bin/src

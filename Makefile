@@ -1,11 +1,10 @@
-heroku:
+herokunode:
 	rm -rf bin/;
 	mkdir bin;
-	make build;
 	if [ ! -d "frontend/node_modules" ]; then cd frontend && npm i; fi;
 	cd frontend && npm run build;
 	mv ./frontend/build ./bin;
-	./bin/canvasProxy;
+	./bin/src;
 
 build:
 	go build -o bin/canvasProxy src/main.go
