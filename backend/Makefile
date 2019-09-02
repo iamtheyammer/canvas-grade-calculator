@@ -1,10 +1,8 @@
 build:
 	go build -o bin/canvasProxy src/main.go
 
-runbuilt:
-	go build -o bin/canvasProxy src/main.go && source .env && ./bin/canvasProxy
+devrunbuilt: build;
+	source .env && ./bin/canvasProxy
 
-br: buildrun
-
-run:
+devrun:
 	source .env && go run src/main.go

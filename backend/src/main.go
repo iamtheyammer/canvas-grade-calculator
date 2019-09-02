@@ -66,5 +66,5 @@ func main() {
 
 	fmt.Println("Canvas proxy running on port 8000")
 
-	log.Fatal(http.ListenAndServe(":8000", mw))
+	log.Fatal(http.ListenAndServe(env.HTTPPort, mw))
 }
