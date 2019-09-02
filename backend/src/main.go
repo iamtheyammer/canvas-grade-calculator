@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/iamtheyammer/canvas-grade-calculator/backend/src/canvasapis"
 	"github.com/iamtheyammer/canvas-grade-calculator/backend/src/env"
-	"github.com/iamtheyammer/canvas-grade-calculator/backend/src/util"
 	"github.com/julienschmidt/httprouter"
 	"log"
 	"net/http"
@@ -21,7 +20,6 @@ func getRouter() *httprouter.Router {
 		HandleOPTIONS:          true,
 	}
 
-	router.GET("/", homeHandler)
 	router.GET("/api/canvas/outcomes/:outcomeID", canvasapis.GetOutcomeByIDHandler)
 	router.GET("/api/canvas/users/profile/self", canvasapis.GetOwnUserProfileHandler)
 	router.GET("/api/canvas/courses", canvasapis.GetCoursesHandler)
@@ -37,21 +35,9 @@ func getRouter() *httprouter.Router {
 	router.GET("/api/canvas/oauth2/response", canvasapis.OAuth2ResponseHandler)
 	router.GET("/api/canvas/oauth2/refresh_token", canvasapis.OAuth2RefreshTokenHandler)
 
+	//router.NotFound = http.FileServer(http.Dir("./build"))
+
 	return router
-}
-
-func homeHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-
-	if r.URL.Path == "/" {
-		_, err := fmt.Fprint(w, "Static files will be served here later...")
-		if err != nil {
-			fmt.Println("There was an error encoding")
-		}
-		return
-	} else {
-		util.SendNotFound(w)
-		return
-	}
 }
 
 type MiddlewareRouter map[string]string
