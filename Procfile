@@ -1,1 +1,1 @@
-web: ./bin/src
+web: mv ./src bin/src && ./bin/src

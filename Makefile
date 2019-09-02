@@ -4,7 +4,6 @@ herokunode:
 	if [ ! -d "frontend/node_modules" ]; then cd frontend && npm i; fi;
 	cd frontend && npm run build;
 	mv ./frontend/build ./bin;
-	./bin/src;
 
 build:
 	go build -o bin/canvasProxy src/main.go
