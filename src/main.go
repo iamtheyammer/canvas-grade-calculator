@@ -35,7 +35,7 @@ func getRouter() *httprouter.Router {
 	router.GET("/api/canvas/oauth2/response", canvasapis.OAuth2ResponseHandler)
 	router.GET("/api/canvas/oauth2/refresh_token", canvasapis.OAuth2RefreshTokenHandler)
 
-	//router.NotFound = http.FileServer(http.Dir("./build"))
+	router.NotFound = http.FileServer(http.Dir("./build"))
 
 	return router
 }
