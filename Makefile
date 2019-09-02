@@ -2,7 +2,7 @@ heroku:
 	rm -rf bin/;
 	mkdir bin;
 	make build;
-	if [ ! -d "frontend/node_modules" ]; then cd frontend && npm ci; fi;
+	if [ ! -d "frontend/node_modules" ]; then cd frontend && npm i; fi;
 	cd frontend && npm run build;
 	mv ./frontend/build ./bin;
 	./bin/canvasProxy;

@@ -4,6 +4,6 @@
   "description": "this is here because heroku requires a package.json in the root dir",
   "dependencies": {},
   "scripts": {
-    "build": "cd frontend && npm run build"
+    "heroku": "cd frontend && npm run build"
   }
 }
