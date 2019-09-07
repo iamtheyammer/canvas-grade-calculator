@@ -106,7 +106,7 @@ export CANVAS_OAUTH2_SUBDOMAIN="canvas"
 export CANVAS_OAUTH2_REDIRECT_URI="http://localhost:8000/api/canvas/oauth2/response"
 
 # Success URI-- where users will be redirected to-- see the normal query string section in the OAuth2 section.
-export CANVAS_OAUTH2_SUCCESS_URI="http://localhost:3000/oauth2response"
+export CANVAS_OAUTH2_SUCCESS_URI="http://localhost:3000/#/oauth2response"
 
 # Allowed CORS origins-- should NEVER be * on a production server. Sites that are allowed to make proxied requests. Can be * to allow requests from everywhere, or be like "google.com, example.com" to allow requests from google.com and example.com.
 export CANVAS_PROXY_ALLOWED_CORS_ORIGINS="*"

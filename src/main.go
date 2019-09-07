@@ -78,7 +78,7 @@ func main() {
 			"which will allow any site to make requests to this server.")
 	}
 
-	fmt.Println("Canvas proxy running on port 8000")
+	fmt.Println(fmt.Sprintf("Canvas proxy running on %s", env.HTTPPort))
 
 	log.Fatal(http.ListenAndServe(env.HTTPPort, mw))
 }
