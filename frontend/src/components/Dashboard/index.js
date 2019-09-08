@@ -33,10 +33,14 @@ const getBreadcrumbNameMap = (courses = []) => {
 function Dashboard(props) {
   const { token } = props;
 
-  if(!token) {
+  // if no token exists, redirect
+  if(!localStorage.token) {
     return (
       <Redirect to="/" />
     );
+  } else if (!token) {
+    // otherwise, wait for token
+    return null;
   }
 
   const { location } = props;

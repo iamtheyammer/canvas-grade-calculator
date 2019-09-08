@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { HashRouter as Router, Route, Switch } from 'react-router-dom';
+import { HashRouter as Router, Route, Switch, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import {
@@ -26,11 +26,16 @@ function App(props) {
   }, [ true ]);
   return(
     <Router>
-      <Route exact path="/" component={ConnectedHome} />
-      <Route exact path="/tokenEntry" component={ConnectedTokenEntry} />
-      <Route exact path="/oauth2response" component={ConnectedOAuth2Response} />
       <Switch>
+        <Route exact path="/" component={ConnectedHome} />
+        <Route exact path="/tokenEntry" component={ConnectedTokenEntry} />
+        <Route exact path="/oauth2response" component={ConnectedOAuth2Response} />
         <Route path="/dashboard" component={Dashboard} />
+        <Route status={404} render={() => (
+          <div align="center">
+            <p color="#fffff">404 Not Found</p>
+            <Link to='/'>Home</Link>
+          </div>)} />
       </Switch>
     </Router>
   )

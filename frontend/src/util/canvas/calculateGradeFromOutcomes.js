@@ -43,13 +43,13 @@ function getGradeFromOutcomes(outcomes) {
     const min = gradeMap[i][1][1];
 
     // lowest outcome over minimum?
-    if(lowestOutcome <= min) {
+    if(lowestOutcome < min) {
       // one outcome is below min for this grade
       continue;
     }
 
     // counted outcomes must be above max, too
-      if(lowestCountedOutcome <= max) {
+      if(lowestCountedOutcome < max) {
       // 75% of outcomes are not over max
       continue;
     }

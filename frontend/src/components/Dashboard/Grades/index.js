@@ -5,7 +5,8 @@ import v4 from 'uuid/v4';
 
 import {
   Typography,
-  Table
+  Table,
+  Icon
 } from 'antd';
 
 import {
@@ -18,12 +19,16 @@ import calculateGradeFromOutcomes from '../../../util/canvas/calculateGradeFromO
 import getActiveCourses from '../../../util/canvas/getActiveCourses';
 import ErrorModal from '../ErrorModal';
 
+import { ReactComponent as PopOutIcon } from '../../../assets/pop_out.svg'
+import { desc } from '../../../util/stringSorter';
+
 const tableColumns = [
   {
     title: 'Class Name',
     dataIndex: 'name',
     key: 'name',
-    render: (text, record) => record.grade === 'N/A' ?
+    sorter: (a, b) => desc(a.name, b.name),
+    render: (text, record) => record.grade === 'N/A' || record.grade.toLowerCase().includes('error') ?
       text :
       <Link to={`/dashboard/grades/${record.id}`}>{text}</Link>,
   },
@@ -31,11 +36,27 @@ const tableColumns = [
     title: 'Class ID',
     dataIndex: 'id',
     key: 'id',
+    sorter: (a, b) => a.id - b.id
   },
   {
     title: 'Grade',
     dataIndex: 'grade',
-    key: 'grade'
+    key: 'grade',
+    sorter: (a, b) => desc(a.grade, b.grade),
+    defaultSortOrder: 'desc'
+  },
+  {
+    title: 'Actions',
+    key: 'actions',
+    render: (text, record) => (
+      <div>
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href={`https://${localStorage.subdomain || 'canvas'}.instructure.com/courses/${record.id}`}
+        >Open on Canvas <Icon component={PopOutIcon}/></a>
+      </div>
+    )
   }
 ];
 
@@ -119,7 +140,7 @@ class Grades extends Component {
     const data = activeCourses.map(c => ({
       key: c.id,
       name: c.name,
-      grade: grades[c.id].grade,
+      grade: grades[c.id] ? grades[c.id].grade : 'Error, try reloading',
       id: c.id
     }));
 
@@ -134,6 +155,10 @@ class Grades extends Component {
           columns={tableColumns}
           dataSource={data}
         />
+        <Typography.Text type="secondary">
+          Please note that these grades may not be accurate or representative of your real grade.
+          For the most accurate and up-to-date information, please consult someone from your school.
+        </Typography.Text>
       </div>
 
     )
