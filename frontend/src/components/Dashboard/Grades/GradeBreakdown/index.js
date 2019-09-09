@@ -11,7 +11,9 @@ import {
   Col,
   Card,
   Button,
-  Table
+  Table,
+  Icon,
+  Popover
 } from 'antd';
 
 import {getOutcomeRollupsForCourse, getUserCourses, getUser} from '../../../../actions/canvas';
@@ -25,13 +27,36 @@ const outcomeTableColumns = [
     title: 'Name',
     dataIndex: 'name',
     key: 'name',
-    sorter: (a, b) => desc(a.name, b.name)
+    sorter: (a, b) => desc(a.name, b.name),
+    render: (text, item) => <div>
+      <Typography.Text>{text}</Typography.Text>
+      <span style={{ width: '7px', display: 'inline-block' }} />
+      {item.timesAssessed < 4 && <Popover
+      title="Below 4 Assessments"
+      placement="topLeft"
+      content={<Typography.Text>
+        This outcome has only been assessed {item.timesAssessed} time{item.timesAssessed !== 1 && 's'}.
+        <br />
+        Outcomes must be assessed 4 or more times to count in your real grade.
+        <br />
+        It's still counted here, though.
+        </Typography.Text>}
+      >
+        <Icon type="info-circle"/>
+      </Popover>}
+    </div>
   },
   {
     title: 'Score',
     dataIndex: 'score',
     key: 'score',
     sorter: (a, b) => a.score - b.score
+  },
+  {
+    title: 'Times Assessed',
+    dataIndex: 'timesAssessed',
+    key: 'timesAssessed',
+    sorter: (a, b) => a.timesAssessed - b.timesAssessed
   },
   {
     title: 'Last Assignment',
@@ -149,6 +174,7 @@ function GradeBreakdown(props) {
       name: outcome.display_name || outcome.title,
       score: rs.score,
       lastAssignment: rs.title,
+      timesAssessed: rs.count,
       key: outcome.id
     });
   });
