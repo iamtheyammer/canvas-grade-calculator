@@ -17,9 +17,11 @@ export const CANVAS_GOT_USER_PROFILE = 'CANVAS_GOT_USER_PROFILE';
 
 export const CANVAS_GOT_USER_COURSES = 'CANVAS_GOT_USER_COURSES';
 
-export const CANVAS_GOT_OUTCOMES_FOR_COURSE = 'CANVAS_GOT_OUTCOME_ROLLUPS_FOR_COURSE';
+export const CANVAS_GOT_OUTCOME_RESULTS_FOR_COURSE = 'CANVAS_GOT_OUTCOME_RESULTS_FOR_COURSE';
 
 export const CANVAS_GOT_OUTCOME_ROLLUPS_FOR_COURSE = 'CANVAS_GOT_OUTCOME_ROLLUPS_FOR_COURSE';
+
+export const CANVAS_GOT_ASSIGNMENTS_FOR_COURSE = 'CANVAS_GOT_ASSIGNMENTS_FOR_COURSE';
 
 export function logout() {
   localStorage.token = '';
@@ -133,15 +135,16 @@ export function getOutcomeRollupsForCourse(id, userId, courseId, token, subdomai
   }
 }
 
-function gotOutcomesForCourse(results, outcomes) {
+function gotOutcomesForCourse(results, outcomes, courseId) {
   return {
-    type: CANVAS_GOT_OUTCOMES_FOR_COURSE,
+    type: CANVAS_GOT_OUTCOME_RESULTS_FOR_COURSE,
     outcomes,
-    results
+    results,
+    courseId
   }
 }
 
-export function getOutcomesForCourse(id, userId, courseId, token, subdomain) {
+export function getOutcomeResultsForCourse(id, userId, courseId, token, subdomain) {
   return async dispatch => {
     dispatch(startLoading(id));
     try {
@@ -157,6 +160,36 @@ export function getOutcomesForCourse(id, userId, courseId, token, subdomain) {
       dispatch(gotOutcomesForCourse(
         outcomeResults.data.outcome_results,
         outcomeResults.data.linked['"outcomes"'],
+        courseId
+      ))
+    } catch (e) {
+      dispatch(canvasProxyError(id, e.response));
+    }
+    dispatch(endLoading(id));
+  }
+}
+
+function gotAssignmentsForCourse(assignments, courseId) {
+  return {
+    type: CANVAS_GOT_ASSIGNMENTS_FOR_COURSE,
+    assignments,
+    courseId
+  }
+}
+
+export function getAssignmentsForCourse(id, courseId, token, subdomain) {
+  return async dispatch => {
+    dispatch(startLoading(id));
+    try {
+      const assignments = await makeCanvasRequest(
+        `courses/${courseId}/assignments`,
+        token,
+        subdomain,
+        {
+        }
+      );
+      dispatch(gotAssignmentsForCourse(
+        assignments.data,
         courseId
       ))
     } catch (e) {

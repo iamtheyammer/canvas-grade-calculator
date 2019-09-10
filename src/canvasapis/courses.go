@@ -187,3 +187,40 @@ func GetOutcomeRollupsByCourseHandler(w http.ResponseWriter, r *http.Request, ps
 	util.HandleCanvasResponse(w, resp, body)
 	return
 }
+
+func GetAssignmentsByCourseHandler(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	courseID := ps.ByName("courseID")
+	if len(courseID) < 1 {
+		util.SendBadRequest(w, "missing courseID as url param")
+		return
+	}
+
+	if !util.ValidateIntegerString(courseID) {
+		util.SendBadRequest(w, "invalid courseID")
+		return
+	}
+
+	ok, rd := util.GetRequestDetailsFromRequest(r)
+	if !ok {
+		util.SendUnauthorized(w, util.RequestDetailsFailedValidationMessage)
+		return
+	}
+
+	includes := r.URL.Query().Get("include[]")
+
+	if len(includes) > 1 {
+		if !util.ValidateIncludes(includes) {
+			util.SendBadRequest(w, "invalid includes")
+			return
+		}
+	}
+
+	resp, body, err := services.GetAssignmentsByCourse(rd, courseID, includes)
+	if err != nil {
+		util.SendInternalServerError(w)
+		return
+	}
+
+	util.HandleCanvasResponse(w, resp, body)
+	return
+}

@@ -5,7 +5,8 @@ import {
   CANVAS_GOT_USER_PROFILE,
   CANVAS_GOT_USER_COURSES,
   CANVAS_GOT_OUTCOME_ROLLUPS_FOR_COURSE,
-  CANVAS_GOT_OUTCOMES_FOR_COURSE
+  CANVAS_GOT_OUTCOME_RESULTS_FOR_COURSE,
+  CANVAS_GOT_ASSIGNMENTS_FOR_COURSE
 } from '../actions/canvas';
 
 export default function canvas(state = {}, action) {
@@ -38,27 +39,48 @@ export default function canvas(state = {}, action) {
         courses: action.courses
       };
     case CANVAS_GOT_OUTCOME_ROLLUPS_FOR_COURSE:
-      const test = action.courseId;
+      const courseId = action.courseId;
       return {
         ...state,
         ...{
           outcomes: {
               ...state.outcomes,
               ...{
-                [test]: action.outcomes
+                [courseId]: action.outcomes
               }
           },
           outcomeRollups: {
               ...state.outcomeRollups,
               ...{
-                [test]: action.results
+                [courseId]: action.results
               }
             }
         }
       };
-    case CANVAS_GOT_OUTCOMES_FOR_COURSE:
-      // just for now
-      return state;
+    case CANVAS_GOT_OUTCOME_RESULTS_FOR_COURSE:
+      return {
+        ...state,
+        ...{
+          outcomeResults: {
+            ...state.outcomeResults,
+            [action.courseId]: action.results
+          },
+          outcomes: {
+            ...state.outcomes,
+            [action.courseId]: action.outcomes
+          }
+        }
+      };
+    case CANVAS_GOT_ASSIGNMENTS_FOR_COURSE:
+      return {
+        ...state,
+        ...{
+          assignments: {
+            ...state.assignments,
+            [action.courseId]: action.assignments
+          }
+        }
+      }
     default:
       return state;
   }

@@ -77,3 +77,21 @@ func GetOutcomeRollupsByCourse(
 
 	return makeAuthenticatedGetRequest(url, rd.Token)
 }
+
+func GetAssignmentsByCourse(
+	rd *util.RequestDetails,
+	courseID string,
+	include string,
+) (*http.Response, string, error) {
+	url := fmt.Sprintf(
+		"https://%s.instructure.com/api/v1/courses/%s/assignments",
+		rd.Subdomain,
+		courseID,
+	)
+
+	if len(include) > 1 {
+		url = fmt.Sprintf("%s?include[]=%s", url, include)
+	}
+
+	return makeAuthenticatedGetRequest(url, rd.Token)
+}

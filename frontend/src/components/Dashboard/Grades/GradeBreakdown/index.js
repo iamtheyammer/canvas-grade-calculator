@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Redirect, Link } from 'react-router-dom';
 import v4 from 'uuid/v4';
+import moment from 'moment';
 
 import {
   Typography,
@@ -16,11 +17,17 @@ import {
   Popover
 } from 'antd';
 
-import {getOutcomeRollupsForCourse, getUserCourses, getUser} from '../../../../actions/canvas';
+import {
+  getOutcomeRollupsForCourse,
+  getOutcomeResultsForCourse,
+  getUserCourses,
+  getUser, getAssignmentsForCourse
+} from '../../../../actions/canvas';
 import calculateGradeFromOutcomes, { gradeMapByGrade } from '../../../../util/canvas/calculateGradeFromOutcomes';
 
 import { desc } from '../../../../util/stringSorter';
 import ConnectedErrorModal from '../../ErrorModal';
+import {ReactComponent as PopOutIcon} from '../../../../assets/pop_out.svg';
 
 const outcomeTableColumns = [
   {
@@ -66,12 +73,54 @@ const outcomeTableColumns = [
   }
 ];
 
+const assignmentTableOutcomes = [
+  {
+    title: 'Assignment Name',
+    dataIndex: 'assignmentName',
+    key: 'assignmentName'
+  },
+  {
+    title: 'Score',
+    dataIndex: 'score',
+    key: 'score',
+    render: score => `${score.score}/${score.possible} (${score.percent}%)`
+  },
+  {
+    title: 'Last Submission',
+    dataIndex: 'lastSubmission',
+    key: 'lastSubmission'
+  },
+  {
+    title: 'Mastery Reached',
+    dataIndex: 'masteryReached',
+    key: 'masteryReached',
+    render: mastery => <div style={{ margin: 'auto'}}>
+      {mastery === true ? <Icon type="check" /> : <Icon type="close" />}
+    </div>
+  },
+  {
+    title: 'Actions',
+    key: 'actions',
+    render: (text, record) => (
+      <div>
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href={record.assignmentUrl}
+        >Open on Canvas <Icon component={PopOutIcon}/></a>
+      </div>
+    )
+  }
+];
+
 function GradeBreakdown(props) {
   const [ getUserId, setGetUserId ] = useState('');
   const [ getCoursesId, setGetCoursesId ] = useState('');
   const [ getRollupsId, setGetRollupsId ] = useState('');
+  const [ getResultsId, setGetResultsId ] = useState('');
+  const [ getAssignmentsId, setGetAssignmentsId ] = useState('');
 
-  const { loading, error, user, courses, outcomeRollups } = props;
+  const { dispatch, token, subdomain, loading, error, user, courses, outcomeRollups, outcomeResults, assignments } = props;
 
   useEffect(
     () => {
@@ -82,24 +131,47 @@ function GradeBreakdown(props) {
         return;
       }
 
-      if(!props.user && !getUserId) {
+      if(!user && !getUserId) {
         const id = v4();
-        props.dispatch(getUser(id, props.token, props.subdomain));
+        dispatch(getUser(id, token, subdomain));
         setGetUserId(id);
         return;
       }
 
-      if(!props.courses && !getCoursesId) {
+      if(!courses && !getCoursesId) {
         const id = v4();
-        props.dispatch(getUserCourses(id, props.token, props.subdomain));
+        dispatch(getUserCourses(id, token, subdomain));
         setGetCoursesId(id);
         return;
       }
 
-      if(!props.outcomeRollups && !getRollupsId) {
+      if(!outcomeRollups && !getRollupsId) {
         const id = v4();
-        props.dispatch(getOutcomeRollupsForCourse(id, props.user.id, courseId, props.token, props.subdomain));
+        dispatch(getOutcomeRollupsForCourse(id, user.id, courseId, token, subdomain));
         setGetRollupsId(id);
+      }
+
+      if((!outcomeResults || !outcomeResults[courseId]) && !getResultsId) {
+        const id = v4();
+        dispatch(getOutcomeResultsForCourse(
+          id,
+          user.id,
+          courseId,
+          token,
+          subdomain
+        ));
+        setGetResultsId(id);
+      }
+
+      if((!assignments || !assignments[courseId]) && !getAssignmentsId) {
+        const id = v4();
+        dispatch(getAssignmentsForCourse(
+          id,
+          courseId,
+          token,
+          subdomain
+        ));
+        setGetAssignmentsId(id);
       }
     },
     // disabling because we specifically only want to re-run this on a props change
@@ -116,12 +188,12 @@ function GradeBreakdown(props) {
     return <Redirect to="/dashboard/grades" />
   }
 
-  const err = error[getUserId] || error[getCoursesId] || error[getRollupsId];
+  const err = error[getUserId] || error[getCoursesId] || error[getRollupsId] || error[getResultsId] || error[getAssignmentsId];
   if(err) {
     return <ConnectedErrorModal error={err} />;
   }
 
-  if(!user || !courses || !outcomeRollups) {
+  if(!user || !courses || !outcomeRollups || !outcomeResults || !outcomeResults[courseId] || !assignments || !assignments[courseId]) {
     return <div align="center">
       <Spin size="default" />
     </div>
@@ -168,6 +240,8 @@ function GradeBreakdown(props) {
 
   const lowestOutcome = getLowestOutcome();
 
+  const results = outcomeResults[courseId];
+
   const outcomeTableData = rollupScores.map(rs => {
     const outcome = outcomes.filter(o => o.id === parseInt(rs.links.outcome))[0];
     return ({
@@ -175,7 +249,24 @@ function GradeBreakdown(props) {
       score: rs.score,
       lastAssignment: rs.title,
       timesAssessed: rs.count,
-      key: outcome.id
+      key: outcome.id,
+      id: outcome.id,
+      assignmentTableData: results.filter(or => parseInt(or.links.learning_outcome) === outcome.id).map(r => {
+        const linkedAssignmentId = parseInt(r.links.assignment.split('_')[1]);
+        const assignment = assignments[courseId].filter(a => a.id === linkedAssignmentId)[0];
+        return ({
+          assignmentName: assignment ? assignment.name : 'unavailable',
+          assignmentUrl: assignment ? assignment.html_url : 'unavailable',
+          score: {
+            score: r.score,
+            possible: r.possible,
+            percent: r.percent * 100
+          },
+          lastSubmission: moment(r.submitted_or_assessed_at).calendar(),
+          masteryReached: r.mastery,
+          key: linkedAssignmentId
+        });
+      })
     });
   });
 
@@ -209,7 +300,14 @@ function GradeBreakdown(props) {
       <Typography.Title level={3}>Outcomes</Typography.Title>
       <Table
         columns={outcomeTableColumns}
-        dataSource={outcomeTableData} />
+        dataSource={outcomeTableData}
+        expandedRowRender={record => record.assignmentTableData.length > 0 ? <Table
+          columns={assignmentTableOutcomes}
+          dataSource={record.assignmentTableData}
+        /> : <Typography.Text>
+          Couldn't get assignments for this outcome.
+        </Typography.Text>}
+      />
       <Typography.Text type="secondary">
         Please note that these grades may not be accurate or representative of your real grade.
         For the most accurate and up-to-date information, please consult someone from your school.
@@ -226,6 +324,8 @@ const ConnectedGradeBreakdown = connect(state => ({
   subdomain: state.canvas.subdomain,
   outcomes: state.canvas.outcomes,
   outcomeRollups: state.canvas.outcomeRollups,
+  outcomeResults: state.canvas.outcomeResults,
+  assignments: state.canvas.assignments,
   user: state.canvas.user
 }))(GradeBreakdown);
 

@@ -21,8 +21,9 @@ class ErrorModal extends Component {
   };
 
   componentDidMount() {
-    const { res, refreshToken } = this.props;
-    const canvasStatusCode = parseInt(res.headers['x-canvas-status-code']);
+    const { res, error, refreshToken } = this.props;
+    const result = res || error.res;
+    const canvasStatusCode = parseInt(result.headers['x-canvas-status-code']);
 
     if (canvasStatusCode === 401) {
       if(refreshToken) {

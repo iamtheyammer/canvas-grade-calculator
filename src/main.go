@@ -25,6 +25,7 @@ func getRouter() *httprouter.Router {
 	router.GET("/api/canvas/outcomes/:outcomeID", canvasapis.GetOutcomeByIDHandler)
 	router.GET("/api/canvas/users/profile/self", canvasapis.GetOwnUserProfileHandler)
 	router.GET("/api/canvas/courses", canvasapis.GetCoursesHandler)
+	router.GET("/api/canvas/courses/:courseID/assignments", canvasapis.GetAssignmentsByCourseHandler)
 	router.GET("/api/canvas/courses/:courseID/outcome_groups", canvasapis.GetOutcomesByCourseHandler)
 	router.GET(
 		"/api/canvas/courses/:courseID/outcome_groups/:outcomeGroupID/outcomes",
