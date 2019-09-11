@@ -12,9 +12,6 @@ devrunbuilt: build;
 devrun:
 	source .env && go run src/main.go
 
-ci_before_install:
-	cd frontend && nvm install `cat .nvmrc` && nvm use
-
 ci:
 	make build;
 	make herokunode;
