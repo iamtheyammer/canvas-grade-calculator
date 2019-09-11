@@ -1,0 +1,10 @@
+language: go
+
+go:
+  - 1.x
+
+before_install: cd frontend && nvm use
+
+install: cd frontend && npm ci
+
+script: make ci

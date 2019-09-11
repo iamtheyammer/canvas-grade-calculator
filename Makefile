@@ -11,3 +11,7 @@ devrunbuilt: build;
 
 devrun:
 	source .env && go run src/main.go
+
+ci:
+	make herokunode;
+	make build;
