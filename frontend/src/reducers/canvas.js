@@ -10,7 +10,7 @@ import {
 } from '../actions/canvas';
 
 export default function canvas(state = {}, action) {
-  switch(action.type) {
+  switch (action.type) {
     case CANVAS_LOGOUT:
       return {};
     case CANVAS_GOT_TOKEN_ENTRY:
@@ -44,17 +44,17 @@ export default function canvas(state = {}, action) {
         ...state,
         ...{
           outcomes: {
-              ...state.outcomes,
-              ...{
-                [courseId]: action.outcomes
-              }
+            ...state.outcomes,
+            ...{
+              [courseId]: action.outcomes
+            }
           },
           outcomeRollups: {
-              ...state.outcomeRollups,
-              ...{
-                [courseId]: action.results
-              }
+            ...state.outcomeRollups,
+            ...{
+              [courseId]: action.results
             }
+          }
         }
       };
     case CANVAS_GOT_OUTCOME_RESULTS_FOR_COURSE:
@@ -80,7 +80,7 @@ export default function canvas(state = {}, action) {
             [action.courseId]: action.assignments
           }
         }
-      }
+      };
     default:
       return state;
   }

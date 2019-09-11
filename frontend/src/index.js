@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import ConnectedApp from './App';
-import {createStore} from 'redux';
+import { createStore } from 'redux';
 import reducers from './reducers';
 import middlewares from './middleware/index';
 

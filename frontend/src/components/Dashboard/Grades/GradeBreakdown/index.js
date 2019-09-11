@@ -21,13 +21,16 @@ import {
   getOutcomeRollupsForCourse,
   getOutcomeResultsForCourse,
   getUserCourses,
-  getUser, getAssignmentsForCourse
+  getUser,
+  getAssignmentsForCourse
 } from '../../../../actions/canvas';
-import calculateGradeFromOutcomes, { gradeMapByGrade } from '../../../../util/canvas/calculateGradeFromOutcomes';
+import calculateGradeFromOutcomes, {
+  gradeMapByGrade
+} from '../../../../util/canvas/calculateGradeFromOutcomes';
 
 import { desc } from '../../../../util/stringSorter';
 import ConnectedErrorModal from '../../ErrorModal';
-import {ReactComponent as PopOutIcon} from '../../../../assets/pop_out.svg';
+import { ReactComponent as PopOutIcon } from '../../../../assets/pop_out.svg';
 
 const outcomeTableColumns = [
   {
@@ -35,23 +38,31 @@ const outcomeTableColumns = [
     dataIndex: 'name',
     key: 'name',
     sorter: (a, b) => desc(a.name, b.name),
-    render: (text, item) => <div>
-      <Typography.Text>{text}</Typography.Text>
-      <span style={{ width: '7px', display: 'inline-block' }} />
-      {item.timesAssessed < 4 && <Popover
-      title="Below 4 Assessments"
-      placement="topLeft"
-      content={<Typography.Text>
-        This outcome has only been assessed {item.timesAssessed} time{item.timesAssessed !== 1 && 's'}.
-        <br />
-        Outcomes must be assessed 4 or more times to count in your real grade.
-        <br />
-        It's still counted here, though.
-        </Typography.Text>}
-      >
-        <Icon type="info-circle"/>
-      </Popover>}
-    </div>
+    render: (text, item) => (
+      <div>
+        <Typography.Text>{text}</Typography.Text>
+        <span style={{ width: '7px', display: 'inline-block' }} />
+        {item.timesAssessed < 4 && (
+          <Popover
+            title="Below 4 Assessments"
+            placement="topLeft"
+            content={
+              <Typography.Text>
+                This outcome has only been assessed {item.timesAssessed} time
+                {item.timesAssessed !== 1 && 's'}.
+                <br />
+                Outcomes must be assessed 4 or more times to count in your real
+                grade.
+                <br />
+                It's still counted here, though.
+              </Typography.Text>
+            }
+          >
+            <Icon type="info-circle" />
+          </Popover>
+        )}
+      </div>
+    )
   },
   {
     title: 'Score',
@@ -94,9 +105,11 @@ const assignmentTableOutcomes = [
     title: 'Mastery Reached',
     dataIndex: 'masteryReached',
     key: 'masteryReached',
-    render: mastery => <div style={{ margin: 'auto'}}>
-      {mastery === true ? <Icon type="check" /> : <Icon type="close" />}
-    </div>
+    render: mastery => (
+      <div style={{ margin: 'auto' }}>
+        {mastery === true ? <Icon type="check" /> : <Icon type="close" />}
+      </div>
+    )
   },
   {
     title: 'Actions',
@@ -107,131 +120,158 @@ const assignmentTableOutcomes = [
           target="_blank"
           rel="noopener noreferrer"
           href={record.assignmentUrl}
-        >Open on Canvas <Icon component={PopOutIcon}/></a>
+        >
+          Open on Canvas <Icon component={PopOutIcon} />
+        </a>
       </div>
     )
   }
 ];
 
 function GradeBreakdown(props) {
-  const [ getUserId, setGetUserId ] = useState('');
-  const [ getCoursesId, setGetCoursesId ] = useState('');
-  const [ getRollupsId, setGetRollupsId ] = useState('');
-  const [ getResultsId, setGetResultsId ] = useState('');
-  const [ getAssignmentsId, setGetAssignmentsId ] = useState('');
+  const [getUserId, setGetUserId] = useState('');
+  const [getCoursesId, setGetCoursesId] = useState('');
+  const [getRollupsId, setGetRollupsId] = useState('');
+  const [getResultsId, setGetResultsId] = useState('');
+  const [getAssignmentsId, setGetAssignmentsId] = useState('');
 
-  const { dispatch, token, subdomain, loading, error, user, courses, outcomeRollups, outcomeResults, assignments } = props;
+  const {
+    dispatch,
+    token,
+    subdomain,
+    loading,
+    error,
+    user,
+    courses,
+    outcomeRollups,
+    outcomeResults,
+    assignments
+  } = props;
 
   useEffect(
     () => {
       // loading before fetch because we don't want to request twice
-      if(loading.includes(getCoursesId) ||
+      if (
+        loading.includes(getCoursesId) ||
         loading.includes(getRollupsId) ||
-        loading.includes(getUserId)) {
+        loading.includes(getUserId)
+      ) {
         return;
       }
 
-      if(!user && !getUserId) {
+      if (!user && !getUserId) {
         const id = v4();
         dispatch(getUser(id, token, subdomain));
         setGetUserId(id);
         return;
       }
 
-      if(!courses && !getCoursesId) {
+      if (!courses && !getCoursesId) {
         const id = v4();
         dispatch(getUserCourses(id, token, subdomain));
         setGetCoursesId(id);
         return;
       }
 
-      if(!outcomeRollups && !getRollupsId) {
+      if (!outcomeRollups && !getRollupsId) {
         const id = v4();
-        dispatch(getOutcomeRollupsForCourse(id, user.id, courseId, token, subdomain));
+        dispatch(
+          getOutcomeRollupsForCourse(id, user.id, courseId, token, subdomain)
+        );
         setGetRollupsId(id);
       }
 
-      if((!outcomeResults || !outcomeResults[courseId]) && !getResultsId) {
+      if ((!outcomeResults || !outcomeResults[courseId]) && !getResultsId) {
         const id = v4();
-        dispatch(getOutcomeResultsForCourse(
-          id,
-          user.id,
-          courseId,
-          token,
-          subdomain
-        ));
+        dispatch(
+          getOutcomeResultsForCourse(id, user.id, courseId, token, subdomain)
+        );
         setGetResultsId(id);
       }
 
-      if((!assignments || !assignments[courseId]) && !getAssignmentsId) {
+      if ((!assignments || !assignments[courseId]) && !getAssignmentsId) {
         const id = v4();
-        dispatch(getAssignmentsForCourse(
-          id,
-          courseId,
-          token,
-          subdomain
-        ));
+        dispatch(getAssignmentsForCourse(id, courseId, token, subdomain));
         setGetAssignmentsId(id);
       }
     },
     // disabling because we specifically only want to re-run this on a props change
     // eslint-disable-next-line
-    [ props ]
+    [props]
   );
 
   const courseId = parseInt(props.match.params.courseId);
-  if(isNaN(courseId)) {
+  if (isNaN(courseId)) {
     notification.error({
       message: 'Invalid Course ID',
       description: 'Course IDs contain only numbers.'
     });
-    return <Redirect to="/dashboard/grades" />
+    return <Redirect to="/dashboard/grades" />;
   }
 
-  const err = error[getUserId] || error[getCoursesId] || error[getRollupsId] || error[getResultsId] || error[getAssignmentsId];
-  if(err) {
+  const err =
+    error[getUserId] ||
+    error[getCoursesId] ||
+    error[getRollupsId] ||
+    error[getResultsId] ||
+    error[getAssignmentsId];
+  if (err) {
     return <ConnectedErrorModal error={err} />;
   }
 
-  if(!user || !courses || !outcomeRollups || !outcomeResults || !outcomeResults[courseId] || !assignments || !assignments[courseId]) {
-    return <div align="center">
-      <Spin size="default" />
-    </div>
+  if (
+    !user ||
+    !courses ||
+    !outcomeRollups ||
+    !outcomeResults ||
+    !outcomeResults[courseId] ||
+    !assignments ||
+    !assignments[courseId]
+  ) {
+    return (
+      <div align="center">
+        <Spin size="default" />
+      </div>
+    );
   }
 
   const course = props.courses.filter(c => c.id === courseId)[0];
-  if(!course) {
+  if (!course) {
     notification.error({
       message: 'Unknown Course',
       description: `Couldn't find a course with the specified ID.`
     });
-    return <Redirect to="/dashboard/grades" />
+    return <Redirect to="/dashboard/grades" />;
   }
 
-  const grade = calculateGradeFromOutcomes(
-    { [courseId]: props.outcomeRollups[courseId] }
-    )[courseId];
+  const grade = calculateGradeFromOutcomes({
+    [courseId]: props.outcomeRollups[courseId]
+  })[courseId];
   const outcomes = props.outcomes[courseId];
   const rollupScores = props.outcomeRollups[courseId][0].scores;
 
-  if(!grade || grade.grade === 'N/A') {
-    return <div align="center">
-      <Typography.Title level={3}>
-        Grade Breakdown Isn't Available for {course.name}.
-      </Typography.Title>
-      <Link to="/dashboard/grades">
-        <Button
-          type="primary"
-        >Back to Grades</Button>
-      </Link>
-    </div>
+  if (!grade || grade.grade === 'N/A') {
+    return (
+      <div align="center">
+        <Typography.Title level={3}>
+          Grade Breakdown Isn't Available for {course.name}.
+        </Typography.Title>
+        <Link to="/dashboard/grades">
+          <Button type="primary">Back to Grades</Button>
+        </Link>
+      </div>
+    );
   }
 
   const { min, max } = gradeMapByGrade[grade.grade];
 
   function getLowestOutcome() {
-    const rollupScore = rollupScores.filter(rs => rs.score === grade.lowestOutcome)[0];
-    const outcome = outcomes.filter(o => o.id === parseInt(rollupScore.links.outcome))[0];
+    const rollupScore = rollupScores.filter(
+      rs => rs.score === grade.lowestOutcome
+    )[0];
+    const outcome = outcomes.filter(
+      o => o.id === parseInt(rollupScore.links.outcome)
+    )[0];
     return {
       outcome,
       rollupScore
@@ -243,54 +283,62 @@ function GradeBreakdown(props) {
   const results = outcomeResults[courseId];
 
   const outcomeTableData = rollupScores.map(rs => {
-    const outcome = outcomes.filter(o => o.id === parseInt(rs.links.outcome))[0];
-    return ({
+    const outcome = outcomes.filter(
+      o => o.id === parseInt(rs.links.outcome)
+    )[0];
+    return {
       name: outcome.display_name || outcome.title,
       score: rs.score,
       lastAssignment: rs.title,
       timesAssessed: rs.count,
       key: outcome.id,
       id: outcome.id,
-      assignmentTableData: results.filter(or => parseInt(or.links.learning_outcome) === outcome.id).map(r => {
-        const linkedAssignmentId = parseInt(r.links.assignment.split('_')[1]);
-        const assignment = assignments[courseId].filter(a => a.id === linkedAssignmentId)[0];
-        return ({
-          assignmentName: assignment ? assignment.name : 'unavailable',
-          assignmentUrl: assignment ? assignment.html_url : 'unavailable',
-          score: {
-            score: r.score,
-            possible: r.possible,
-            percent: r.percent * 100
-          },
-          lastSubmission: moment(r.submitted_or_assessed_at).calendar(),
-          masteryReached: r.mastery,
-          key: linkedAssignmentId
-        });
-      })
-    });
+      assignmentTableData: results
+        .filter(or => parseInt(or.links.learning_outcome) === outcome.id)
+        .map(r => {
+          const linkedAssignmentId = parseInt(r.links.assignment.split('_')[1]);
+          const assignment = assignments[courseId].filter(
+            a => a.id === linkedAssignmentId
+          )[0];
+          return {
+            assignmentName: assignment ? assignment.name : 'unavailable',
+            assignmentUrl: assignment ? assignment.html_url : 'unavailable',
+            score: {
+              score: r.score,
+              possible: r.possible,
+              percent: r.percent * 100
+            },
+            lastSubmission: moment(r.submitted_or_assessed_at).calendar(),
+            masteryReached: r.mastery,
+            key: linkedAssignmentId
+          };
+        })
+    };
   });
 
-  return(
+  return (
     <div>
-      <Typography.Title level={2}>Grade Breakdown for {course.name}</Typography.Title>
+      <Typography.Title level={2}>
+        Grade Breakdown for {course.name}
+      </Typography.Title>
       <Row gutter={12}>
         <Col span={12}>
           <Card title={`Current Grade: ${grade.grade}`}>
-            Your current grade, {grade.grade}, requires 75% of outcomes to be above {max} and
-            no outcomes to be below {min}.
+            Your current grade, {grade.grade}, requires 75% of outcomes to be
+            above {max} and no outcomes to be below {min}.
           </Card>
         </Col>
         <Col span={12}>
-          <Card
-            title={`Lowest Outcome: ${lowestOutcome.rollupScore.score}`}
-          >
-            Your lowest outcome is {lowestOutcome.outcome.display_name || lowestOutcome.outcome.title}, with
-            a score of {lowestOutcome.rollupScore.score}. <br />
-            This outcome's last assignment
-            was {lowestOutcome.rollupScore.title}, and this outcome has been
-            assessed {lowestOutcome.rollupScore.count} times. <br/>
-            The lowest possible outcome for your current grade is {min}, and you're
-            ~{+(lowestOutcome.rollupScore.score - min).toFixed(2)} points from it.
+          <Card title={`Lowest Outcome: ${lowestOutcome.rollupScore.score}`}>
+            Your lowest outcome is{' '}
+            {lowestOutcome.outcome.display_name || lowestOutcome.outcome.title},
+            with a score of {lowestOutcome.rollupScore.score}. <br />
+            This outcome's last assignment was {lowestOutcome.rollupScore.title}
+            , and this outcome has been assessed{' '}
+            {lowestOutcome.rollupScore.count} times. <br />
+            The lowest possible outcome for your current grade is {min}, and
+            you're ~{+(lowestOutcome.rollupScore.score - min).toFixed(2)} points
+            from it.
           </Card>
         </Col>
       </Row>
@@ -301,19 +349,26 @@ function GradeBreakdown(props) {
       <Table
         columns={outcomeTableColumns}
         dataSource={outcomeTableData}
-        expandedRowRender={record => record.assignmentTableData.length > 0 ? <Table
-          columns={assignmentTableOutcomes}
-          dataSource={record.assignmentTableData}
-        /> : <Typography.Text>
-          Couldn't get assignments for this outcome.
-        </Typography.Text>}
+        expandedRowRender={record =>
+          record.assignmentTableData.length > 0 ? (
+            <Table
+              columns={assignmentTableOutcomes}
+              dataSource={record.assignmentTableData}
+            />
+          ) : (
+            <Typography.Text>
+              Couldn't get assignments for this outcome.
+            </Typography.Text>
+          )
+        }
       />
       <Typography.Text type="secondary">
-        Please note that these grades may not be accurate or representative of your real grade.
-        For the most accurate and up-to-date information, please consult someone from your school.
+        Please note that these grades may not be accurate or representative of
+        your real grade. For the most accurate and up-to-date information,
+        please consult someone from your school.
       </Typography.Text>
     </div>
-  )
+  );
 }
 
 const ConnectedGradeBreakdown = connect(state => ({

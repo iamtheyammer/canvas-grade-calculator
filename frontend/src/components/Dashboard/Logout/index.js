@@ -3,17 +3,13 @@ import { connect } from 'react-redux';
 
 import { Redirect } from 'react-router-dom';
 
-import {
-  logout
-} from '../../../actions/canvas';
+import { logout } from '../../../actions/canvas';
 
 function Logout(props) {
   props.dispatch(logout());
-  return <Redirect to="/" />
+  return <Redirect to="/" />;
 }
 
-const ConnectedLogout = connect(state => ({
-
-}))(Logout);
+const ConnectedLogout = connect(state => ({}))(Logout);
 
 export default ConnectedLogout;

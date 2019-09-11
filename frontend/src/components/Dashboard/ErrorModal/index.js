@@ -9,7 +9,7 @@ class ErrorModal extends Component {
     super(props);
     this.state = {
       redirect: false
-    }
+    };
   }
 
   handleOk = () => {
@@ -26,28 +26,30 @@ class ErrorModal extends Component {
     const canvasStatusCode = parseInt(result.headers['x-canvas-status-code']);
 
     if (canvasStatusCode === 401) {
-      if(refreshToken) {
+      if (refreshToken) {
         Modal.info({
           title: 'Re-Authorizing...',
-          content: 'Please wait while we re-authorize with Canvas. [ErrorModal not yet implemented!]',
+          content:
+            'Please wait while we re-authorize with Canvas. [ErrorModal not yet implemented!]',
           closable: false,
-          okButtonProps: {loading: true},
+          okButtonProps: { loading: true },
           okText: 'One sec...',
-          icon: <Icon type="lock"/>
+          icon: <Icon type="lock" />
         });
       } else {
         Modal.info({
           title: 'Invalid Canvas Token',
-          content: 'There\'s an issue with your Canvas token or subdomain. Click Logout to enter a different one.',
+          content:
+            "There's an issue with your Canvas token or subdomain. Click Logout to enter a different one.",
           closable: false,
           icon: <Icon type="exclamation-circle" style={{ color: '#D8000C' }} />,
           okText: 'Logout',
           onOk: this.handleCancel
-        })
+        });
       }
     } else {
       Modal.confirm({
-        icon: <Icon type="exclamation-circle" style={{color: '#D8000C'}}/>,
+        icon: <Icon type="exclamation-circle" style={{ color: '#D8000C' }} />,
         title: 'Unknown Error',
         content: `Do you want to reload?
     
@@ -56,17 +58,13 @@ ${this.props.error}`,
         cancelText: 'Logout',
         onCancel: this.handleCancel,
         onOk: this.handleOk
-      })
+      });
     }
   }
 
-
-
   render() {
-    if(this.state.redirect) {
-      return (
-        <Redirect to="/dashboard/logout" />
-      )
+    if (this.state.redirect) {
+      return <Redirect to="/dashboard/logout" />;
     }
 
     return <div />;

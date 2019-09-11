@@ -6,12 +6,12 @@ export function startLoading(id) {
   return {
     type: LOADING_START,
     id
-  }
+  };
 }
 
 export function endLoading(id) {
   return {
     type: LOADING_END,
     id
-  }
+  };
 }

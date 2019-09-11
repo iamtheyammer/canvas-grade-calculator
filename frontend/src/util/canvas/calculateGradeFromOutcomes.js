@@ -1,4 +1,4 @@
-export default (outcomeRollups) => {
+export default outcomeRollups => {
   const courseIds = Object.keys(outcomeRollups);
 
   const grades = {};
@@ -9,22 +9,21 @@ export default (outcomeRollups) => {
     // array of outcomes for a specified class
     const scores = rollup[0].scores.map(s => s.score);
 
-    grades[i] = scores.length > 0 ?
-      getGradeFromOutcomes(scores) :
-      { grade: 'N/A' };
+    grades[i] =
+      scores.length > 0 ? getGradeFromOutcomes(scores) : { grade: 'N/A' };
   });
 
   return grades;
-}
+};
 
 function getGradeFromOutcomes(outcomes) {
   // outcomes, ex: [1,2,3,4]
 
   // what is 75% of outcomes.length
-  const outcomesOverMinNeeded = Math.round((75*outcomes.length)/100);
+  const outcomesOverMinNeeded = Math.round((75 * outcomes.length) / 100);
 
   // desc
-  const sortedOutcomes = outcomes.sort((a, b) => b-a);
+  const sortedOutcomes = outcomes.sort((a, b) => b - a);
   // 75% of outcomes
   const countedOutcomes = sortedOutcomes.slice(0, outcomesOverMinNeeded);
 
@@ -43,13 +42,13 @@ function getGradeFromOutcomes(outcomes) {
     const min = gradeMap[i][1][1];
 
     // lowest outcome over minimum?
-    if(lowestOutcome < min) {
+    if (lowestOutcome < min) {
       // one outcome is below min for this grade
       continue;
     }
 
     // counted outcomes must be above max, too
-      if(lowestCountedOutcome < max) {
+    if (lowestCountedOutcome < max) {
       // 75% of outcomes are not over max
       continue;
     }
@@ -68,21 +67,21 @@ function getGradeFromOutcomes(outcomes) {
 }
 
 export const gradeMap = [
-  [ 'A', [ 3.5, 3 ] ],
-  [ 'A-', [ 3.5, 2.5 ] ],
-  [ 'B+', [ 3, 2.5 ] ],
-  [ 'B', [ 3, 2.25 ] ],
-  [ 'B-', [ 3, 2 ] ],
-  [ 'C', [ 2.5, 2 ] ],
-  [ 'I', [ 0, 0 ] ]
+  ['A', [3.5, 3]],
+  ['A-', [3.5, 2.5]],
+  ['B+', [3, 2.5]],
+  ['B', [3, 2.25]],
+  ['B-', [3, 2]],
+  ['C', [2.5, 2]],
+  ['I', [0, 0]]
 ];
 
 export const gradeMapByGrade = {
-  'A': { max: 3.5, min: 3 },
+  A: { max: 3.5, min: 3 },
   'A-': { max: 3.5, min: 2.5 },
   'B+': { max: 3, min: 2.5 },
-  'B': { max: 3, min: 2.25 },
+  B: { max: 3, min: 2.25 },
   'B-': { max: 3, min: 2 },
-  'C': { max: 2.5, min: 2 },
-  'I': { max: 0, min: 0 }
+  C: { max: 2.5, min: 2 },
+  I: { max: 0, min: 0 }
 };

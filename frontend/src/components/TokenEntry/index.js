@@ -1,11 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import {
-  Input,
-  notification,
-  Typography,
-  Button
-} from 'antd';
+import { Input, notification, Typography, Button } from 'antd';
 
 import { gotUserTokenEntry } from '../../actions/canvas';
 
@@ -14,11 +9,11 @@ class TokenEntry extends Component {
     super(props);
     this.state = {
       token: this.props.token || '',
-      subdomain: this.props.subdomain || '',
-    }
+      subdomain: this.props.subdomain || ''
+    };
   }
 
-  tokenOnChange = (e) => {
+  tokenOnChange = e => {
     e.preventDefault();
 
     this.setState({
@@ -26,10 +21,12 @@ class TokenEntry extends Component {
     });
   };
 
-  onSubmit = (e) => {
+  onSubmit = e => {
     e.preventDefault();
 
-    this.props.dispatch(gotUserTokenEntry(this.state.token, this.state.subdomain));
+    this.props.dispatch(
+      gotUserTokenEntry(this.state.token, this.state.subdomain)
+    );
 
     notification.success({
       message: 'Success!',
@@ -42,17 +39,19 @@ class TokenEntry extends Component {
 
     this.setState({
       subdomain: e.target.value
-    })
+    });
   };
 
-
   render() {
-    return(
+    return (
       <div>
-        <Typography.Title level={2}>Advanced: Manual token entry</Typography.Title>
+        <Typography.Title level={2}>
+          Advanced: Manual token entry
+        </Typography.Title>
         <Typography.Paragraph>
-          Manually generate a token, then enter it here, along with your subdomain.
-          Leave the subdomain empty to use <code>canvas.instructure.com</code>
+          Manually generate a token, then enter it here, along with your
+          subdomain. Leave the subdomain empty to use{' '}
+          <code>canvas.instructure.com</code>
         </Typography.Paragraph>
         <Input
           addonBefore="Canvas Token"
@@ -68,15 +67,14 @@ class TokenEntry extends Component {
           value={this.state.subdomain}
         />
         <br />
-        <Button
-          type="primary"
-          onClick={this.onSubmit}
-        >Submit</Button>
+        <Button type="primary" onClick={this.onSubmit}>
+          Submit
+        </Button>
         <Typography.Paragraph>
           Return home to get redirected to the dashboard.
         </Typography.Paragraph>
       </div>
-    )
+    );
   }
 }
 
