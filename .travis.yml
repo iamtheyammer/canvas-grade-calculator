@@ -3,7 +3,7 @@ language: go
 go:
   - 1.x
 
-before_install: cd frontend && nvm install `cat .nvmrc` && nvm use
+before_install: make ci_before_install
 
 install: cd frontend && npm ci
 
