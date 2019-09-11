@@ -5,6 +5,6 @@ go:
 
 before_install: cd frontend && nvm install `cat .nvmrc` && nvm use && cd ..
 
-install: cd frontend && npm ci
+install: cd frontend && npm ci && cd ..
 
 script: make ci

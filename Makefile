@@ -14,4 +14,5 @@ devrun:
 
 ci:
 	make build;
+	cd frontend && npm run formatcheck && cd ..;
 	make herokunode;
