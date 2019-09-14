@@ -15,7 +15,8 @@ deploy:
   github_token: $GITHUB_TOKEN
   keep_history: false
   local_dir: bin/build
-  committer_from_gh: true
+  name: "I Yam Who I Yam - Travis Deploy"
+  email: "iamtheyammer@gmail.com"
   target_branch: gh-pages
   on:
-    branch: add-travis-deploy
+    branch: master
