@@ -1,14 +1,14 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import v4 from 'uuid/v4';
 
-import { Typography, Table, Icon } from 'antd';
+import { Typography, Table, Icon, Spin } from 'antd';
 
 import {
   getUser,
   getUserCourses,
-  getOutcomeRollupsForCourse
+  getOutcomeRollupsAndOutcomesForCourse
 } from '../../../actions/canvas';
 
 import calculateGradeFromOutcomes from '../../../util/canvas/calculateGradeFromOutcomes';
@@ -62,118 +62,121 @@ const tableColumns = [
   }
 ];
 
-class Grades extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      getUserId: '',
-      getUserCoursesId: '',
-      getOutcomeRollupsForCourseIds: []
-    };
-  }
+function Grades(props) {
+  const [getUserId, setGetUserId] = useState('');
+  const [getCoursesId, setGetCoursesId] = useState('');
+  const [
+    getOutcomeRollupsForCourseIds,
+    setGetOutcomeRollupsForCourseIds
+  ] = useState([]);
 
-  componentDidMount() {
-    this.loadData();
-  }
+  const [loadingText, setLoadingText] = useState('');
 
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    this.loadData();
-  }
+  const allIds = [getUserId, getCoursesId, ...getOutcomeRollupsForCourseIds];
 
-  getAllIds = () => [
-    this.state.getUserId,
-    this.state.getUserCoursesId,
-    ...this.state.getOutcomeRollupsForCourseIds
-  ];
+  const {
+    dispatch,
+    token,
+    subdomain,
+    loading,
+    error,
+    user,
+    courses,
+    outcomeRollups
+  } = props;
 
-  loadData = () => {
-    // if anything from this component is loading, let it load!
-    const allLoading = this.getAllIds();
+  const err = error[Object.keys(error).filter(eid => allIds.includes(eid))[0]];
 
-    if (this.props.loading.some(l => allLoading.includes(l))) {
+  useEffect(() => {
+    if (allIds.some(id => loading.includes(id)) || err) {
       return;
     }
 
-    if (!this.props.user) {
-      const getUserId = v4();
-      this.setState({ getUserId });
-      this.props.dispatch(
-        getUser(getUserId, this.props.token, this.props.subdomain)
-      );
-    } else if (!this.props.courses) {
-      const getUserCoursesId = v4();
-      this.setState({ getUserCoursesId });
-      this.props.dispatch(
-        getUserCourses(getUserCoursesId, this.props.token, this.props.subdomain)
-      );
-    } else if (!this.props.outcomeRollups) {
+    if (!user && !getUserId) {
+      const id = v4();
+      dispatch(getUser(id, token, subdomain));
+      setGetUserId(id);
+      setLoadingText('your profile');
+      return;
+    }
+
+    if (!courses && !getCoursesId) {
+      const id = v4();
+      dispatch(getUserCourses(id, token, subdomain));
+      setGetCoursesId(id);
+      setLoadingText('your courses');
+      return;
+    }
+
+    if (!outcomeRollups && !getOutcomeRollupsForCourseIds.length) {
       const ids = [];
-      getActiveCourses(this.props.courses).forEach(c => {
-        const getOutcomeRollupsForCourseId = v4();
-        ids.push(getOutcomeRollupsForCourseId);
-        this.props.dispatch(
-          getOutcomeRollupsForCourse(
-            getOutcomeRollupsForCourseId,
-            this.props.user.id,
+      getActiveCourses(courses).forEach(c => {
+        const id = v4();
+        ids.push(id);
+        dispatch(
+          getOutcomeRollupsAndOutcomesForCourse(
+            id,
+            user.id,
             c.id,
-            this.props.token,
-            this.props.subdomain
+            token,
+            subdomain
           )
         );
       });
-      this.setState({
-        getOutcomeRollupsForCourseIds: this.state.getOutcomeRollupsForCourseIds.concat(
-          ids
-        )
-      });
+      setGetOutcomeRollupsForCourseIds(ids);
+      setLoadingText('your grades');
     }
-  };
+    // ignoring because we only want this hook to re-run on a prop change
+    // eslint-disable-next-line
+  }, [props]);
 
-  render() {
-    const { loading, outcomeRollups, courses, errors } = this.props;
-    const allIds = this.getAllIds();
+  if (err) {
+    return <ErrorModal error={err} />;
+  }
 
-    if (loading.some(l => allIds.includes(l)) || !outcomeRollups) {
-      return (
-        <div>
-          <Typography.Title level={2}>Grades</Typography.Title>
-          <Table columns={tableColumns} loading={true} />
-        </div>
-      );
-    }
-
-    const erroredIds = Object.keys(errors).filter(l => allIds.includes(l));
-    if (erroredIds.length > 0) {
-      return <ErrorModal res={errors[erroredIds[0]]} />;
-    }
-
-    const grades = calculateGradeFromOutcomes(outcomeRollups);
-    const activeCourses = getActiveCourses(courses);
-
-    const data = activeCourses.map(c => ({
-      key: c.id,
-      name: c.name,
-      grade: grades[c.id] ? grades[c.id].grade : 'Error, try reloading',
-      id: c.id
-    }));
-
+  if (
+    !user ||
+    !courses ||
+    !outcomeRollups ||
+    allIds.some(id => loading.includes(id))
+  ) {
     return (
-      <div>
-        <Typography.Title level={2}>Grades</Typography.Title>
-        <Typography.Text type="secondary">
-          If you have a grade in a class, click on the name to see a detailed
-          breakdown of your grade.
-        </Typography.Text>
-        <div style={{ marginBottom: '12px' }} />
-        <Table columns={tableColumns} dataSource={data} />
-        <Typography.Text type="secondary">
-          Please note that these grades may not be accurate or representative of
-          your real grade. For the most accurate and up-to-date information,
-          please consult someone from your school.
-        </Typography.Text>
+      <div align="center">
+        <Spin />
+        <span style={{ paddingTop: '20px' }} />
+        <Typography.Title level={3}>
+          {`Loading ${loadingText}...`}
+        </Typography.Title>
       </div>
     );
   }
+
+  const grades = calculateGradeFromOutcomes(outcomeRollups);
+  const activeCourses = getActiveCourses(courses);
+
+  const data = activeCourses.map(c => ({
+    key: c.id,
+    name: c.name,
+    grade: grades[c.id] ? grades[c.id].grade : 'Error, try reloading',
+    id: c.id
+  }));
+
+  return (
+    <div>
+      <Typography.Title level={2}>Grades</Typography.Title>
+      <Typography.Text type="secondary">
+        If you have a grade in a class, click on the name to see a detailed
+        breakdown of your grade.
+      </Typography.Text>
+      <div style={{ marginBottom: '12px' }} />
+      <Table columns={tableColumns} dataSource={data} />
+      <Typography.Text type="secondary">
+        Please note that these grades may not be accurate or representative of
+        your real grade. For the most accurate and up-to-date information,
+        please consult someone from your school.
+      </Typography.Text>
+    </div>
+  );
 }
 
 const ConnectedGrades = connect(state => ({
@@ -183,7 +186,7 @@ const ConnectedGrades = connect(state => ({
   user: state.canvas.user,
   token: state.canvas.token,
   subdomain: state.canvas.subdomain,
-  errors: state.error,
+  error: state.error,
   loading: state.loading
 }))(Grades);
 

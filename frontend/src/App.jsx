@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { HashRouter as Router, Route, Switch, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
-import { gotUserTokenEntry } from './actions/canvas';
+import { gotStoredCredentials } from './actions/canvas';
 
 import 'antd/dist/antd.css';
 
@@ -16,7 +16,11 @@ function App(props) {
   useEffect(() => {
     if (localStorage.token) {
       props.dispatch(
-        gotUserTokenEntry(localStorage.token, localStorage.subdomain || '')
+        gotStoredCredentials(
+          localStorage.token,
+          localStorage.refreshToken,
+          localStorage.subdomain || ''
+        )
       );
     }
 

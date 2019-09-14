@@ -6,10 +6,14 @@ import { startLoading, endLoading } from './loading';
 
 export const CANVAS_LOGOUT = 'CANVAS_LOGOUT';
 
+export const CANVAS_GOT_STORED_CREDENTIALS = 'CANVAS_GOT_STORED_CREDENTIALS';
+
 export const CANVAS_GOT_TOKEN_ENTRY = 'CANVAS_GOT_TOKEN_ENTRY';
 export const CANVAS_GOT_USER_OAUTH = 'CANVAS_GOT_USER_OAUTH';
 
-export const CANVAS_GOT_USER_SUBDOMAIN = 'CANVAS_GOT_USER_SUBDOMAIN';
+export const CANVAS_GOT_NEW_TOKEN_FROM_REFRESH_TOKEN =
+  'CANVAS_GOT_NEW_TOKEN_FROM_REFRESH_TOKEN';
+
 export const CANVAS_GOT_USER_PROFILE = 'CANVAS_GOT_USER_PROFILE';
 
 export const CANVAS_GOT_USER_COURSES = 'CANVAS_GOT_USER_COURSES';
@@ -20,6 +24,9 @@ export const CANVAS_GOT_OUTCOME_RESULTS_FOR_COURSE =
 export const CANVAS_GOT_OUTCOME_ROLLUPS_FOR_COURSE =
   'CANVAS_GOT_OUTCOME_ROLLUPS_FOR_COURSE';
 
+export const CANVAS_GOT_OUTCOME_ROLLUPS_AND_OUTCOMES_FOR_COURSE =
+  'CANVAS_GOT_OUTCOME_ROLLUPS_AND_OUTCOMES_FOR_COURSE';
+
 export const CANVAS_GOT_ASSIGNMENTS_FOR_COURSE =
   'CANVAS_GOT_ASSIGNMENTS_FOR_COURSE';
 
@@ -29,6 +36,15 @@ export function logout() {
   localStorage.refreshToken = '';
   return {
     type: CANVAS_LOGOUT
+  };
+}
+
+export function gotStoredCredentials(token, refreshToken, subdomain) {
+  return {
+    type: CANVAS_GOT_STORED_CREDENTIALS,
+    token,
+    refreshToken,
+    subdomain
   };
 }
 
@@ -45,11 +61,41 @@ export function gotUserTokenEntry(token, subdomain) {
 export function gotUserOAuth(token, refreshToken, subdomain) {
   localStorage.token = token;
   localStorage.refreshToken = refreshToken;
+  localStorage.subdomain = subdomain;
   return {
     type: CANVAS_GOT_USER_OAUTH,
     token,
     refreshToken,
     subdomain
+  };
+}
+
+function gotNewTokenFromRefreshToken(newToken) {
+  return {
+    type: CANVAS_GOT_NEW_TOKEN_FROM_REFRESH_TOKEN,
+    newToken
+  };
+}
+
+export function getNewTokenFromRefreshToken(id, subdomain, refreshToken) {
+  return async dispatch => {
+    dispatch(startLoading(id));
+    try {
+      const newTokenRes = await makeCanvasRequest(
+        'oauth2/refresh_token',
+        '',
+        subdomain,
+        { refresh_token: refreshToken }
+      ).then(res => res.data.access_token);
+      localStorage.token = newTokenRes;
+      dispatch(gotNewTokenFromRefreshToken(newTokenRes));
+
+      // reloading is the easiest way to just start over with a solid token.
+      window.location.reload();
+    } catch (e) {
+      dispatch(canvasProxyError(id, e.response));
+    }
+    dispatch(endLoading(id));
   };
 }
 
@@ -97,16 +143,16 @@ export function getUserCourses(id, token, subdomain) {
   };
 }
 
-function gotOutcomeRollupsForCourse(results, outcomes, courseId) {
+function gotOutcomeRollupsAndOutcomesForCourse(results, outcomes, courseId) {
   return {
-    type: CANVAS_GOT_OUTCOME_ROLLUPS_FOR_COURSE,
+    type: CANVAS_GOT_OUTCOME_ROLLUPS_AND_OUTCOMES_FOR_COURSE,
     results,
     outcomes,
     courseId
   };
 }
 
-export function getOutcomeRollupsForCourse(
+export function getOutcomeRollupsAndOutcomesForCourse(
   id,
   userId,
   courseId,
@@ -121,14 +167,26 @@ export function getOutcomeRollupsForCourse(
         token,
         subdomain,
         {
-          'include[]': '"outcomes"',
           userId
         }
       );
+      // get outcomes
+      const outcomesToGet = [];
+      outcomeResults.data.rollups.forEach(r => {
+        r.scores.forEach(s => outcomesToGet.push(s.links.outcome));
+      });
+      console.log(outcomesToGet);
+      const outcomesRes = await Promise.all(
+        outcomesToGet.map(otg =>
+          makeCanvasRequest(`outcomes/${otg}`, token, subdomain).then(
+            res => res.data
+          )
+        )
+      );
       dispatch(
-        gotOutcomeRollupsForCourse(
+        gotOutcomeRollupsAndOutcomesForCourse(
           outcomeResults.data.rollups,
-          outcomeResults.data.linked['"outcomes"'],
+          outcomesRes,
           courseId
         )
       );
@@ -139,10 +197,9 @@ export function getOutcomeRollupsForCourse(
   };
 }
 
-function gotOutcomesForCourse(results, outcomes, courseId) {
+function gotOutcomeResultsForCourse(results, courseId) {
   return {
     type: CANVAS_GOT_OUTCOME_RESULTS_FOR_COURSE,
-    outcomes,
     results,
     courseId
   };
@@ -163,14 +220,12 @@ export function getOutcomeResultsForCourse(
         token,
         subdomain,
         {
-          'include[]': '"outcomes"',
           userId
         }
       );
       dispatch(
-        gotOutcomesForCourse(
+        gotOutcomeResultsForCourse(
           outcomeResults.data.outcome_results,
-          outcomeResults.data.linked['"outcomes"'],
           courseId
         )
       );
