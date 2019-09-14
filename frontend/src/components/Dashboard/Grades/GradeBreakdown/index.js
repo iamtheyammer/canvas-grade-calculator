@@ -18,11 +18,11 @@ import {
 } from 'antd';
 
 import {
-  getOutcomeRollupsForCourse,
   getOutcomeResultsForCourse,
   getUserCourses,
   getUser,
-  getAssignmentsForCourse
+  getAssignmentsForCourse,
+  getOutcomeRollupsAndOutcomesForCourse
 } from '../../../../actions/canvas';
 import calculateGradeFromOutcomes, {
   gradeMapByGrade
@@ -135,6 +135,8 @@ function GradeBreakdown(props) {
   const [getResultsId, setGetResultsId] = useState('');
   const [getAssignmentsId, setGetAssignmentsId] = useState('');
 
+  const [loadingText, setLoadingText] = useState('');
+
   const {
     dispatch,
     token,
@@ -148,13 +150,21 @@ function GradeBreakdown(props) {
     assignments
   } = props;
 
+  const err =
+    error[getUserId] ||
+    error[getCoursesId] ||
+    error[getRollupsId] ||
+    error[getResultsId] ||
+    error[getAssignmentsId];
+
   useEffect(
     () => {
       // loading before fetch because we don't want to request twice
       if (
         loading.includes(getCoursesId) ||
         loading.includes(getRollupsId) ||
-        loading.includes(getUserId)
+        loading.includes(getUserId) ||
+        err
       ) {
         return;
       }
@@ -163,6 +173,7 @@ function GradeBreakdown(props) {
         const id = v4();
         dispatch(getUser(id, token, subdomain));
         setGetUserId(id);
+        setLoadingText('your profile');
         return;
       }
 
@@ -170,14 +181,22 @@ function GradeBreakdown(props) {
         const id = v4();
         dispatch(getUserCourses(id, token, subdomain));
         setGetCoursesId(id);
+        setLoadingText('your courses');
         return;
       }
 
       if (!outcomeRollups && !getRollupsId) {
         const id = v4();
         dispatch(
-          getOutcomeRollupsForCourse(id, user.id, courseId, token, subdomain)
+          getOutcomeRollupsAndOutcomesForCourse(
+            id,
+            user.id,
+            courseId,
+            token,
+            subdomain
+          )
         );
+        setLoadingText('your grades');
         setGetRollupsId(id);
       }
 
@@ -186,12 +205,14 @@ function GradeBreakdown(props) {
         dispatch(
           getOutcomeResultsForCourse(id, user.id, courseId, token, subdomain)
         );
+        setLoadingText('your grade in this class');
         setGetResultsId(id);
       }
 
       if ((!assignments || !assignments[courseId]) && !getAssignmentsId) {
         const id = v4();
         dispatch(getAssignmentsForCourse(id, courseId, token, subdomain));
+        setLoadingText('your assignments');
         setGetAssignmentsId(id);
       }
     },
@@ -209,16 +230,6 @@ function GradeBreakdown(props) {
     return <Redirect to="/dashboard/grades" />;
   }
 
-  const err =
-    error[getUserId] ||
-    error[getCoursesId] ||
-    error[getRollupsId] ||
-    error[getResultsId] ||
-    error[getAssignmentsId];
-  if (err) {
-    return <ConnectedErrorModal error={err} />;
-  }
-
   if (
     !user ||
     !courses ||
@@ -231,8 +242,16 @@ function GradeBreakdown(props) {
     return (
       <div align="center">
         <Spin size="default" />
+        <span style={{ marginTop: '10px' }} />
+        <Typography.Title level={3}>
+          {`Loading ${loadingText}...`}
+        </Typography.Title>
       </div>
     );
+  }
+
+  if (err) {
+    return <ConnectedErrorModal error={err} />;
   }
 
   const course = props.courses.filter(c => c.id === courseId)[0];

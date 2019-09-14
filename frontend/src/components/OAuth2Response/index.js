@@ -17,16 +17,14 @@ function OAuth2Response(props) {
       return <Redirect to="/" />;
     }
 
-    if (query.error === 'proxy_canvas_error') {
-      // unknown error
-      notification.error({
-        message: 'Unknown Error',
-        duration: 0,
-        description:
-          'There was an unknown error logging you in with Canvas. Try again later.'
-      });
-      return <Redirect to="/" />;
-    }
+    // unknown error
+    notification.error({
+      message: 'Unknown Error',
+      duration: 0,
+      description:
+        'There was an unknown error logging you in with Canvas. Try again later.'
+    });
+    return <Redirect to="/" />;
   }
 
   const canvasResponse = JSON.parse(query.canvas_response);
