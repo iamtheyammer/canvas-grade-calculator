@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import v4 from 'uuid/v4';
@@ -126,6 +126,8 @@ function Grades(props) {
       setGetOutcomeRollupsForCourseIds(ids);
       setLoadingText('your grades');
     }
+    // ignoring because we only want this hook to re-run on a prop change
+    // eslint-disable-next-line
   }, [props]);
 
   if (err) {
