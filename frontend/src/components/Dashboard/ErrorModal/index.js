@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 import { shape, object } from 'prop-types';
 import { Redirect } from 'react-router-dom';
 import { Modal, Icon } from 'antd';
+import v4 from 'uuid/v4';
+import { getNewTokenFromRefreshToken } from '../../../actions/canvas';
 
 class ErrorModal extends Component {
   constructor(props) {
@@ -21,7 +23,7 @@ class ErrorModal extends Component {
   };
 
   componentDidMount() {
-    const { res, error, refreshToken } = this.props;
+    const { res, error, refreshToken, subdomain, dispatch } = this.props;
     const result = res || error.res;
     const canvasStatusCode = parseInt(result.headers['x-canvas-status-code']);
 
@@ -36,6 +38,7 @@ class ErrorModal extends Component {
           okText: 'One sec...',
           icon: <Icon type="lock" />
         });
+        dispatch(getNewTokenFromRefreshToken(v4(), subdomain, refreshToken));
       } else {
         Modal.info({
           title: 'Invalid Canvas Token',
@@ -72,7 +75,8 @@ ${this.props.error}`,
 }
 
 const ConnectedErrorModal = connect(state => ({
-  refreshToken: state.canvas.refreshToken
+  refreshToken: state.canvas.refreshToken,
+  token: state.canvas.token
 }))(ErrorModal);
 
 ConnectedErrorModal.propTypes = {

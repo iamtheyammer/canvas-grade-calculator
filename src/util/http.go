@@ -174,11 +174,12 @@ func HandleCanvasOAuth2Response(w http.ResponseWriter, resp *http.Response, body
 		q.Set("canvas_response", body)
 		q.Set("subdomain", env.OAuth2Subdomain)
 	}
-	redirectTo.RawQuery = q.Encode()
+
+	redirectToURLString := fmt.Sprintf("%s?%s", env.OAuth2SuccessURI, q.Encode())
 
 	SendRedirect(
 		w,
-		redirectTo.String(),
+		redirectToURLString,
 	)
 	return
 }

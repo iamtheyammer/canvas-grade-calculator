@@ -6,7 +6,7 @@ Written in Golang for maximum speed.
 
 ### Request
 
-There are two headers for each request to `/api/canvas/*`:
+There are two headers for each request to `/api/canvas/*` (except for OAuth2):
 
 - `X-Canvas-Token`
     - Auth token for Canvas. Required for all requests except for OAuth2.

@@ -24,6 +24,7 @@ func getOAuth2AuthURI() string {
 	q.Set("response_type", "code")
 	q.Set("purpose", "Canvas CBL Grades Calculator")
 	q.Set("redirect_uri", env.OAuth2RedirectURI)
+	q.Set("scope", util.GetScopesList())
 	redirectURL.RawQuery = q.Encode()
 
 	return redirectURL.String()
