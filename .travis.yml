@@ -8,3 +8,15 @@ before_install: cd frontend && nvm install `cat .nvmrc` && nvm use && cd ..
 install: cd frontend && npm ci && cd ..
 
 script: make ci
+
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN
+  keep_history: false
+  local_dir: bin/build
+  name: "I Yam Who I Yam - Travis Deploy"
+  email: "iamtheyammer@gmail.com"
+  target_branch: gh-pages
+  on:
+    branch: master
