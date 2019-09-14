@@ -8,3 +8,14 @@ before_install: cd frontend && nvm install `cat .nvmrc` && nvm use && cd ..
 install: cd frontend && npm ci && cd ..
 
 script: make ci
+
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $GITHUB_TOKEN
+  keep_history: false
+  local_dir: frontend/build
+  committer_from_gh: true
+  target_branch: gh-pages
+  on:
+    branch: add-travis-deploy
