@@ -14,7 +14,7 @@ deploy:
   skip_cleanup: true
   github_token: $GITHUB_TOKEN
   keep_history: false
-  local_dir: frontend/build
+  local_dir: bin/build
   committer_from_gh: true
   target_branch: gh-pages
   on:
