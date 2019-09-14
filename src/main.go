@@ -52,10 +52,12 @@ func getStaticRouter() *httprouter.Router {
 type MiddlewareRouter map[string]string
 
 func (_ MiddlewareRouter) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	// handle serving react static
-	if !strings.HasPrefix(r.URL.Path, "/api/") {
-		staticRouter.ServeHTTP(w, r)
-		return
+	// handle serving react static, if enabled
+	if env.ShouldServeStatic == "true" {
+		if !strings.HasPrefix(r.URL.Path, "/api/") {
+			staticRouter.ServeHTTP(w, r)
+			return
+		}
 	}
 
 	// apply CORS headers

@@ -118,4 +118,7 @@ export CANVAS_PROXY_ALLOWED_SUBDOMAINS="*"
 
 # Your default Canvas subdomain for non-OAuth2 requests. Should probably match your OAuth2 subdomain and MUST be in your allowed subdomains list.
 export CANVAS_PROXY_DEFAULT_SUBDOMAIN="canvas"
+
+# Whether the proxy should serve static from the build folder. Defaults to false.
+export CANVAS_PROXY_SERVE_STATIC="false"
 ```
