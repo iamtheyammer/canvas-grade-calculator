@@ -9,6 +9,9 @@ install: cd frontend && npm ci && cd ..
 
 script: make ci
 
+# sets the CNAME file so github continues serving canvascbl.com
+before_deploy: echo "canvascbl.com" > bin/build/CNAME
+
 deploy:
   provider: pages
   skip_cleanup: true
