@@ -31,8 +31,7 @@ class ErrorModal extends Component {
       if (refreshToken) {
         Modal.info({
           title: 'Re-Authorizing...',
-          content:
-            'Please wait while we re-authorize with Canvas. [ErrorModal not yet implemented!]',
+          content: 'Please wait while we re-authorize with Canvas.',
           closable: false,
           okButtonProps: { loading: true },
           okText: 'One sec...',

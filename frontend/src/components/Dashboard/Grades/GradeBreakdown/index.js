@@ -342,22 +342,37 @@ function GradeBreakdown(props) {
       </Typography.Title>
       <Row gutter={12}>
         <Col span={12}>
-          <Card title={`Current Grade: ${grade.grade}`}>
-            Your current grade, {grade.grade}, requires 75% of outcomes to be
-            above {max} and no outcomes to be below {min}.
+          <Card title={`Current Grade`}>
+            <div>
+              <div align="center">
+                <Typography.Title level={1}>{grade.grade}</Typography.Title>
+              </div>
+              <Typography.Text>
+                Your current grade, {grade.grade}, requires 75% of outcomes to
+                be above {max} and no outcomes to be below {min}.
+              </Typography.Text>
+            </div>
           </Card>
         </Col>
         <Col span={12}>
-          <Card title={`Lowest Outcome: ${lowestOutcome.rollupScore.score}`}>
-            Your lowest outcome is{' '}
-            {lowestOutcome.outcome.display_name || lowestOutcome.outcome.title},
-            with a score of {lowestOutcome.rollupScore.score}. <br />
-            This outcome's last assignment was {lowestOutcome.rollupScore.title}
-            , and this outcome has been assessed{' '}
-            {lowestOutcome.rollupScore.count} times. <br />
-            The lowest possible outcome for your current grade is {min}, and
-            you're ~{+(lowestOutcome.rollupScore.score - min).toFixed(2)} points
-            from it.
+          <Card title="Lowest Outcome">
+            <div align="center">
+              <Typography.Title level={1}>
+                {lowestOutcome.rollupScore.score}
+              </Typography.Title>
+            </div>
+            <Typography.Text>
+              Your lowest outcome is{' '}
+              {lowestOutcome.outcome.display_name ||
+                lowestOutcome.outcome.title}
+              , with a score of {lowestOutcome.rollupScore.score}. <br />
+              This outcome's last assignment was{' '}
+              {lowestOutcome.rollupScore.title}, and this outcome has been
+              assessed {lowestOutcome.rollupScore.count} times. <br />
+              The lowest possible outcome for your current grade is {min}, and
+              you're ~{+(lowestOutcome.rollupScore.score - min).toFixed(2)}{' '}
+              points from it.
+            </Typography.Text>
           </Card>
         </Col>
       </Row>
