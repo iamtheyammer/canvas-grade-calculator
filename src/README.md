@@ -110,7 +110,7 @@ export CANVAS_OAUTH2_REDIRECT_URI="http://localhost:8000/api/canvas/oauth2/respo
 # Success URI-- where users will be redirected to-- see the normal query string section in the OAuth2 section.
 export CANVAS_OAUTH2_SUCCESS_URI="http://localhost:3000/#/oauth2response"
 
-# Allowed CORS origins-- should NEVER be * on a production server. Sites that are allowed to make proxied requests. Can be * to allow requests from everywhere, or be like "google.com, example.com" to allow requests from google.com and example.com.
+# Allowed CORS origins-- should NEVER be * on a production server. Sites that are allowed to make proxied requests. Can be * to allow requests from everywhere, or be like "https://google.com" to allow requests from google.com. More: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Access-Control-Allow-Origin
 export CANVAS_PROXY_ALLOWED_CORS_ORIGINS="*"
 
 # Allowed Canvas subdomains-- should NEVER be * on a production server. Also probably should match your OAuth2 Subdomain. Comma separated. Ex: "canvas,myschool" to allow canvas.instructure.com and myschool.instructure.com. Also can be * to allow all, but that will throw a warning.
