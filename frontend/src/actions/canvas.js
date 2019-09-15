@@ -175,7 +175,6 @@ export function getOutcomeRollupsAndOutcomesForCourse(
       outcomeResults.data.rollups.forEach(r => {
         r.scores.forEach(s => outcomesToGet.push(s.links.outcome));
       });
-      console.log(outcomesToGet);
       const outcomesRes = await Promise.all(
         outcomesToGet.map(otg =>
           makeCanvasRequest(`outcomes/${otg}`, token, subdomain).then(
