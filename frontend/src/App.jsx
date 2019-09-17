@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { HashRouter as Router, Route, Switch, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
+import * as ReactGA from 'react-ga';
 
 import { gotStoredCredentials } from './actions/canvas';
 
@@ -28,6 +29,10 @@ function App(props) {
     // array change, and we want this code to run only once.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [true]);
+
+  ReactGA.initialize(process.env.REACT_APP_GOOGLE_ANALYTICS_ID);
+
+  ReactGA.pageview('/');
   return (
     <Router>
       <Switch>

@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { Switch, Route, Redirect, Link } from 'react-router-dom';
+import * as ReactGA from 'react-ga';
 
 import { Layout, Breadcrumb } from 'antd';
 
@@ -28,6 +29,7 @@ const getBreadcrumbNameMap = (courses = []) => {
 
 function Dashboard(props) {
   const { token } = props;
+  const [hasSentUserToGa, setHasSentUserToGa] = useState(false);
 
   // if no token exists, redirect
   if (!localStorage.token) {
@@ -37,7 +39,12 @@ function Dashboard(props) {
     return null;
   }
 
-  const { location } = props;
+  ReactGA.pageview(
+    props.location.pathname +
+      (props.location.search.includes('~') ? '' : props.location.search)
+  );
+
+  const { location, user } = props;
   const pathSnippets = location.pathname.split('/').filter(i => i);
   const breadcrumbNameMap = getBreadcrumbNameMap(props.courses || []);
   const breadcrumbItems = pathSnippets.map((_, index) => {
@@ -48,6 +55,11 @@ function Dashboard(props) {
       </Breadcrumb.Item>
     );
   });
+
+  if (hasSentUserToGa === false && user) {
+    ReactGA.set({ userId: user.id });
+    setHasSentUserToGa(true);
+  }
 
   return (
     <Layout className="layout">
@@ -92,7 +104,27 @@ function Dashboard(props) {
 
 const ConnectedDashboard = connect(state => ({
   token: state.canvas.token,
-  courses: state.canvas.courses
+  courses: state.canvas.courses,
+  user: state.canvas.user
 }))(Dashboard);
 
 export default ConnectedDashboard;
+
+/*
+
+avatar_url: "https://dtechhs.instructure.com/images/messages/avatar-50.png"
+bio: null
+calendar: {ics: "https://dtechhs.instructure.com/feeds/calendars/user_DCPxI1aLRwRaIkZ43PjlJqdoaoZIqW9oEyS9JaIa.ics"}
+effective_locale: "en"
+id: 396
+integration_id: null
+locale: null
+login_id: "smendelson21@dtechhs.org"
+lti_user_id: "2faffb2f42d8b058085a456b265d4df3a3dbeabd"
+name: "Sam Mendelson"
+primary_email: "smendelson21@dtechhs.org"
+short_name: "Sam Mendelson"
+sortable_name: "Mendelson, Sam"
+time_zone: "America/Los_Angeles"
+title: null
+ */
