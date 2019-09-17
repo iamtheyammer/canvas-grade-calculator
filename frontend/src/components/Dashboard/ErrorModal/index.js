@@ -37,9 +37,9 @@ class ErrorModal extends Component {
   componentDidMount() {
     const { res, error, refreshToken, subdomain, dispatch } = this.props;
     const result = res || error.res;
-    if(!result) {
+    if (!result) {
       this.handleUnknown();
-      return
+      return;
     }
 
     const canvasStatusCode = parseInt(result.headers['x-canvas-status-code']);
@@ -67,7 +67,7 @@ class ErrorModal extends Component {
         });
       }
     } else {
-      this.handleUnknown()
+      this.handleUnknown();
     }
   }
 
