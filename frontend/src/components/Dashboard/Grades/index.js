@@ -31,12 +31,12 @@ const tableColumns = [
         <Link to={`/dashboard/grades/${record.id}`}>{text}</Link>
       )
   },
-  {
-    title: 'Class ID',
-    dataIndex: 'id',
-    key: 'id',
-    sorter: (a, b) => a.id - b.id
-  },
+  // {
+  //   title: 'Class ID',
+  //   dataIndex: 'id',
+  //   key: 'id',
+  //   sorter: (a, b) => a.id - b.id
+  // },
   {
     title: 'Grade',
     dataIndex: 'grade',
@@ -49,13 +49,14 @@ const tableColumns = [
     key: 'actions',
     render: (text, record) => (
       <div>
+        <Link to={`/dashboard/grades/${record.id}`}>See Breakdown</Link>{' | '}
         <a
           target="_blank"
           rel="noopener noreferrer"
           href={`https://${localStorage.subdomain ||
             'canvas'}.instructure.com/courses/${record.id}`}
         >
-          Open on Canvas <Icon component={PopOutIcon} />
+          Open on Canvas <Icon component={PopOutIcon}/>
         </a>
       </div>
     )

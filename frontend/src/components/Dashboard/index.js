@@ -78,7 +78,7 @@ function Dashboard(props) {
             <Route
               exact
               path="/dashboard"
-              render={() => <Redirect to="/dashboard/profile" />}
+              render={() => <Redirect to="/dashboard/grades" />}
             />
             <Route
               exact

@@ -25,7 +25,7 @@ function DashboardNav(props) {
             .slice(1, 3)
             .join('/')}`
         ]}
-        style={{ lineHeight: '64px' }}
+        style={{ lineHeight: '64px', float: 'left' }}
       >
         <Menu.Item key="/dashboard/profile">
           <Link to="/dashboard/profile">Profile</Link>
@@ -33,7 +33,30 @@ function DashboardNav(props) {
         <Menu.Item key="/dashboard/grades">
           <Link to="/dashboard/grades">Grades</Link>
         </Menu.Item>
-        <Menu.Item style={{ float: 'right' }} key="/dashboard/logout">
+      </Menu>
+      <Menu
+        theme="dark"
+        mode="horizontal"
+        style={{ lineHeight: '64px', float: 'right' }}
+        selectable={false}
+      >
+        <Menu.SubMenu key="moreActions" title="More Actions">
+          <Menu.Item key="openIssue">
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href={`https://github.com/iamtheyammer/canvas-grade-calculator/issues/new/choose`}
+            >Submit Feedback/Report a Bug</a>
+          </Menu.Item>
+          <Menu.Item key="forkOnGitHub">
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              href={`https://github.com/iamtheyammer/canvas-grade-calculator`}
+            >Fork this project on GitHub</a>
+          </Menu.Item>
+        </Menu.SubMenu>
+        <Menu.Item key="/dashboard/logout">
           <Link to={'/dashboard/logout'}>Logout</Link>
         </Menu.Item>
       </Menu>

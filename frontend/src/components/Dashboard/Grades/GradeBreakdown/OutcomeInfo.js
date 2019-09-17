@@ -91,7 +91,7 @@ This outcome's last assignment was ${
           return (
             <div>
               <Typography.Text>
-                To get an A in this class, you'll need to make sure:
+                To get an A in this class, you'll need to make sure that:
               </Typography.Text>
               <ul>
                 <li>
