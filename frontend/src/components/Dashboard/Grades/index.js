@@ -108,7 +108,10 @@ function Grades(props) {
       return;
     }
 
-    if (!outcomeRollups && !getOutcomeRollupsForCourseIds.length) {
+    if (
+      (!outcomeRollups || courses.some(c => !outcomeRollups[c.id])) &&
+      !getOutcomeRollupsForCourseIds.length
+    ) {
       const ids = [];
       getActiveCourses(courses).forEach(c => {
         const id = v4();
