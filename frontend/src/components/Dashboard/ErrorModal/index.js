@@ -22,9 +22,26 @@ class ErrorModal extends Component {
     this.setState({ redirect: true });
   };
 
+  handleUnknown = () => {
+    Modal.confirm({
+      icon: <Icon type="exclamation-circle" style={{ color: '#D8000C' }} />,
+      title: 'Unknown Error',
+      content: `Do you want to reload?`,
+      okText: 'Try again',
+      cancelText: 'Logout',
+      onCancel: this.handleCancel,
+      onOk: this.handleOk
+    });
+  };
+
   componentDidMount() {
     const { res, error, refreshToken, subdomain, dispatch } = this.props;
     const result = res || error.res;
+    if(!result) {
+      this.handleUnknown();
+      return
+    }
+
     const canvasStatusCode = parseInt(result.headers['x-canvas-status-code']);
 
     if (canvasStatusCode === 401) {
@@ -50,17 +67,7 @@ class ErrorModal extends Component {
         });
       }
     } else {
-      Modal.confirm({
-        icon: <Icon type="exclamation-circle" style={{ color: '#D8000C' }} />,
-        title: 'Unknown Error',
-        content: `Do you want to reload?
-    
-${this.props.error}`,
-        okText: 'Try again',
-        cancelText: 'Logout',
-        onCancel: this.handleCancel,
-        onOk: this.handleOk
-      });
+      this.handleUnknown()
     }
   }
 

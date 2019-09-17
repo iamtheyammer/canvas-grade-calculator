@@ -230,6 +230,10 @@ function GradeBreakdown(props) {
     return <Redirect to="/dashboard/grades" />;
   }
 
+  if (err) {
+    return <ConnectedErrorModal error={err} />;
+  }
+
   if (
     !user ||
     !courses ||
@@ -248,10 +252,6 @@ function GradeBreakdown(props) {
         </Typography.Title>
       </div>
     );
-  }
-
-  if (err) {
-    return <ConnectedErrorModal error={err} />;
   }
 
   const course = props.courses.filter(c => c.id === courseId)[0];
