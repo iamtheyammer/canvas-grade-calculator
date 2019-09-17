@@ -46,14 +46,18 @@ function DashboardNav(props) {
               target="_blank"
               rel="noopener noreferrer"
               href={`https://github.com/iamtheyammer/canvas-grade-calculator/issues/new/choose`}
-            >Submit Feedback/Report a Bug</a>
+            >
+              Submit Feedback/Report a Bug
+            </a>
           </Menu.Item>
           <Menu.Item key="forkOnGitHub">
             <a
               target="_blank"
               rel="noopener noreferrer"
               href={`https://github.com/iamtheyammer/canvas-grade-calculator`}
-            >Fork this project on GitHub</a>
+            >
+              Fork this project on GitHub
+            </a>
           </Menu.Item>
         </Menu.SubMenu>
         <Menu.Item key="/dashboard/logout">

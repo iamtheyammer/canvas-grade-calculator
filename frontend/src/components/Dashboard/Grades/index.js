@@ -49,14 +49,15 @@ const tableColumns = [
     key: 'actions',
     render: (text, record) => (
       <div>
-        <Link to={`/dashboard/grades/${record.id}`}>See Breakdown</Link>{' | '}
+        <Link to={`/dashboard/grades/${record.id}`}>See Breakdown</Link>
+        {' | '}
         <a
           target="_blank"
           rel="noopener noreferrer"
           href={`https://${localStorage.subdomain ||
             'canvas'}.instructure.com/courses/${record.id}`}
         >
-          Open on Canvas <Icon component={PopOutIcon}/>
+          Open on Canvas <Icon component={PopOutIcon} />
         </a>
       </div>
     )
