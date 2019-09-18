@@ -6,10 +6,15 @@ import { Redirect } from 'react-router-dom';
 import { logout } from '../../../actions/canvas';
 
 function Logout(props) {
-  props.dispatch(logout());
+  const { token, subdomain } = props;
+
+  props.dispatch(logout(token, subdomain));
   return <Redirect to="/" />;
 }
 
-const ConnectedLogout = connect(state => ({}))(Logout);
+const ConnectedLogout = connect(state => ({
+  token: state.canvas.token,
+  subdomain: state.canvas.subdomain
+}))(Logout);
 
 export default ConnectedLogout;

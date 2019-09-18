@@ -81,3 +81,21 @@ func OAuth2RefreshTokenHandler(w http.ResponseWriter, r *http.Request, _ httprou
 	util.HandleCanvasResponse(w, resp, body)
 	return
 }
+
+func DeleteOAuth2TokenHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	ok, rd := util.GetRequestDetailsFromRequest(r)
+
+	if !ok {
+		util.SendUnauthorized(w, util.RequestDetailsFailedValidationMessage)
+		return
+	}
+
+	resp, body, err := services.DeleteOAuth2Token(rd)
+	if err != nil {
+		util.SendInternalServerError(w)
+		return
+	}
+
+	util.HandleCanvasResponse(w, resp, body)
+	return
+}
