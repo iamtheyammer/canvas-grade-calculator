@@ -247,6 +247,8 @@ function GradeBreakdown(props) {
   if (
     !user ||
     !courses ||
+    !allOutcomes ||
+    !allOutcomes[courseId] ||
     !outcomeRollups ||
     !outcomeResults ||
     !outcomeResults[courseId] ||
