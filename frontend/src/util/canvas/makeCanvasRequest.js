@@ -1,9 +1,15 @@
 import axios from 'axios';
 import getUrlPrefix from '../getUrlPrefix';
 
-export default (path, token, subdomain = 'canvas', query = {}) =>
+export default (
+  path,
+  token,
+  subdomain = 'canvas',
+  query = {},
+  method = 'get'
+) =>
   axios({
-    method: 'get',
+    method,
     url: `${getUrlPrefix}/api/canvas/${path}`,
     headers: {
       'X-Canvas-Token': token,

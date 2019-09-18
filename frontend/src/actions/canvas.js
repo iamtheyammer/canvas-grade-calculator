@@ -30,12 +30,36 @@ export const CANVAS_GOT_OUTCOME_ROLLUPS_AND_OUTCOMES_FOR_COURSE =
 export const CANVAS_GOT_ASSIGNMENTS_FOR_COURSE =
   'CANVAS_GOT_ASSIGNMENTS_FOR_COURSE';
 
-export function logout() {
+function loggedOut(forwardUrl, error) {
   localStorage.token = '';
   localStorage.subdomain = '';
   localStorage.refreshToken = '';
+
+  if (forwardUrl.length > 1) {
+    window.location = forwardUrl;
+  }
+
   return {
-    type: CANVAS_LOGOUT
+    type: CANVAS_LOGOUT,
+    forwardUrl
+  };
+}
+
+export function logout(token, subdomain) {
+  return async dispatch => {
+    try {
+      const forwardUrl = await makeCanvasRequest(
+        'oauth2/token',
+        token,
+        subdomain,
+        {},
+        'delete'
+      ).then(res => res.data.forward_url);
+      dispatch(loggedOut(forwardUrl || ''));
+    } catch (e) {
+      // errors don't really matter
+      dispatch(loggedOut('', e));
+    }
   };
 }
 
@@ -136,6 +160,42 @@ export function getUserCourses(id, token, subdomain) {
     try {
       const userRes = await makeCanvasRequest('courses', token, subdomain);
       dispatch(gotUserCourses(userRes.data));
+    } catch (e) {
+      dispatch(canvasProxyError(id, e.response));
+    }
+    dispatch(endLoading(id));
+  };
+}
+
+function gotOutcomeRollupsForCourse(results, courseId) {
+  return {
+    type: CANVAS_GOT_OUTCOME_ROLLUPS_FOR_COURSE,
+    results,
+    courseId
+  };
+}
+
+export function getOutcomeRollupsForCourse(
+  id,
+  userId,
+  courseId,
+  token,
+  subdomain
+) {
+  return async dispatch => {
+    dispatch(startLoading(id));
+    try {
+      const outcomeResults = await makeCanvasRequest(
+        `courses/${courseId}/outcome_rollups`,
+        token,
+        subdomain,
+        {
+          userId
+        }
+      );
+      dispatch(
+        gotOutcomeRollupsForCourse(outcomeResults.data.rollups, courseId)
+      );
     } catch (e) {
       dispatch(canvasProxyError(id, e.response));
     }
