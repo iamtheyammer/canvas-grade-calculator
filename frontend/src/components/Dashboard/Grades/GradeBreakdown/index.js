@@ -159,8 +159,14 @@ function GradeBreakdown(props) {
     error[getResultsId] ||
     error[getAssignmentsId];
 
+  const courseId = parseInt(props.match.params.courseId);
+
+  const allOutcomes = props.outcomes;
+
   useEffect(
     () => {
+      if (isNaN(courseId)) return;
+
       // loading before fetch because we don't want to request twice
       if (
         loading.includes(getCoursesId) ||
@@ -187,7 +193,10 @@ function GradeBreakdown(props) {
         return;
       }
 
-      if (!outcomeRollups && !getRollupsId) {
+      if (
+        (!outcomeRollups || !allOutcomes || !allOutcomes[courseId]) &&
+        !getRollupsId
+      ) {
         const id = v4();
         dispatch(
           getOutcomeRollupsAndOutcomesForCourse(
@@ -223,7 +232,6 @@ function GradeBreakdown(props) {
     [props]
   );
 
-  const courseId = parseInt(props.match.params.courseId);
   if (isNaN(courseId)) {
     notification.error({
       message: 'Invalid Course ID',

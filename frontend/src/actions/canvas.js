@@ -167,6 +167,42 @@ export function getUserCourses(id, token, subdomain) {
   };
 }
 
+function gotOutcomeRollupsForCourse(results, courseId) {
+  return {
+    type: CANVAS_GOT_OUTCOME_ROLLUPS_FOR_COURSE,
+    results,
+    courseId
+  };
+}
+
+export function getOutcomeRollupsForCourse(
+  id,
+  userId,
+  courseId,
+  token,
+  subdomain
+) {
+  return async dispatch => {
+    dispatch(startLoading(id));
+    try {
+      const outcomeResults = await makeCanvasRequest(
+        `courses/${courseId}/outcome_rollups`,
+        token,
+        subdomain,
+        {
+          userId
+        }
+      );
+      dispatch(
+        gotOutcomeRollupsForCourse(outcomeResults.data.rollups, courseId)
+      );
+    } catch (e) {
+      dispatch(canvasProxyError(id, e.response));
+    }
+    dispatch(endLoading(id));
+  };
+}
+
 function gotOutcomeRollupsAndOutcomesForCourse(results, outcomes, courseId) {
   return {
     type: CANVAS_GOT_OUTCOME_ROLLUPS_AND_OUTCOMES_FOR_COURSE,

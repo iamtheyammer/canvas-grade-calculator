@@ -60,12 +60,6 @@ export default function canvas(state = {}, action) {
       return {
         ...state,
         ...{
-          outcomes: {
-            ...state.outcomes,
-            ...{
-              [courseId]: action.outcomes
-            }
-          },
           outcomeRollups: {
             ...state.outcomeRollups,
             ...{

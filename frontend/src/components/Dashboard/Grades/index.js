@@ -8,7 +8,7 @@ import { Typography, Table, Icon, Spin } from 'antd';
 import {
   getUser,
   getUserCourses,
-  getOutcomeRollupsAndOutcomesForCourse
+  getOutcomeRollupsForCourse
 } from '../../../actions/canvas';
 
 import calculateGradeFromOutcomes from '../../../util/canvas/calculateGradeFromOutcomes';
@@ -89,6 +89,8 @@ function Grades(props) {
 
   const err = error[Object.keys(error).filter(eid => allIds.includes(eid))[0]];
 
+  const activeCourses = courses ? getActiveCourses(courses) : courses;
+
   useEffect(() => {
     if (allIds.some(id => loading.includes(id)) || err) {
       return;
@@ -111,21 +113,15 @@ function Grades(props) {
     }
 
     if (
-      (!outcomeRollups || courses.some(c => !outcomeRollups[c.id])) &&
+      (!outcomeRollups || activeCourses.some(c => !outcomeRollups[c.id])) &&
       !getOutcomeRollupsForCourseIds.length
     ) {
       const ids = [];
-      getActiveCourses(courses).forEach(c => {
+      activeCourses.forEach(c => {
         const id = v4();
         ids.push(id);
         dispatch(
-          getOutcomeRollupsAndOutcomesForCourse(
-            id,
-            user.id,
-            c.id,
-            token,
-            subdomain
-          )
+          getOutcomeRollupsForCourse(id, user.id, c.id, token, subdomain)
         );
       });
       setGetOutcomeRollupsForCourseIds(ids);
@@ -157,7 +153,6 @@ function Grades(props) {
   }
 
   const grades = calculateGradeFromOutcomes(outcomeRollups);
-  const activeCourses = getActiveCourses(courses);
 
   const data = activeCourses.map(c => ({
     key: c.id,
@@ -186,7 +181,6 @@ function Grades(props) {
 
 const ConnectedGrades = connect(state => ({
   courses: state.canvas.courses,
-  outcomes: state.canvas.outcomes,
   outcomeRollups: state.canvas.outcomeRollups,
   user: state.canvas.user,
   token: state.canvas.token,
