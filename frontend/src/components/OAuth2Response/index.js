@@ -5,6 +5,7 @@ import { Redirect } from 'react-router-dom';
 import { notification } from 'antd';
 
 import { gotUserOAuth } from '../../actions/canvas';
+import env from '../../util/env';
 
 function OAuth2Response(props) {
   const query = parse(
@@ -37,7 +38,7 @@ function OAuth2Response(props) {
   );
 
   // set the version to current since it's a new user
-  localStorage.prevVersion = process.env.REACT_APP_CURRENT_VERSION;
+  localStorage.prevVersion = env.currentVersion;
 
   notification.success({
     message: 'Success!',

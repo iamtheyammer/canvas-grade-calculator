@@ -2,10 +2,11 @@ import logger from 'redux-logger';
 import thunk from 'redux-thunk';
 
 import { applyMiddleware } from 'redux';
+import env from '../util/env';
 
 const middlewares = [thunk];
 
-if (process.env.NODE_ENV === 'development') {
+if (env.nodeEnv === 'development') {
   middlewares.push(logger);
 }
 

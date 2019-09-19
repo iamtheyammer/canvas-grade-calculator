@@ -12,6 +12,7 @@ import ConnectedTokenEntry from './components/TokenEntry';
 import ConnectedOAuth2Response from './components/OAuth2Response';
 
 import Dashboard from './components/Dashboard';
+import env from './util/env';
 
 function App(props) {
   useEffect(() => {
@@ -30,7 +31,7 @@ function App(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [true]);
 
-  ReactGA.initialize(process.env.REACT_APP_GOOGLE_ANALYTICS_ID);
+  ReactGA.initialize(env.googleAnalyticsId);
 
   ReactGA.pageview('/');
   return (
