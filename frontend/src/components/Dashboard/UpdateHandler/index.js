@@ -58,7 +58,7 @@ function UpdateHandler(props) {
       if (availableUpdates.length < 1) {
         return;
       }
-      
+
       Modal.info({
         title: (
           <Typography.Text>
