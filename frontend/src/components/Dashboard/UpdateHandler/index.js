@@ -58,9 +58,7 @@ function UpdateHandler(props) {
       if (availableUpdates.length < 1) {
         return;
       }
-
-      localStorage.prevVersion = currentVersion;
-
+      
       Modal.info({
         title: (
           <Typography.Text>
