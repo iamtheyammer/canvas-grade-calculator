@@ -20,7 +20,7 @@ function getGradeFromOutcomes(outcomes) {
   // outcomes, ex: [1,2,3,4]
 
   // what is 75% of outcomes.length
-  const outcomesOverMinNeeded = Math.round((75 * outcomes.length) / 100);
+  const outcomesOverMinNeeded = Math.ceil((75 * outcomes.length) / 100);
 
   // desc
   const sortedOutcomes = outcomes.sort((a, b) => b - a);

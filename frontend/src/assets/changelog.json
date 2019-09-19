@@ -1,0 +1,14 @@
+[
+  {
+    "timestamp": 1568909947972,
+    "type": 0,
+    "title": "Fixed grade calculation algorithm",
+    "content": "Fixed the algorithm that calculates grades to make it actually accurate. You might see some of your grades drop due to the previously inaccurate calculation."
+  },
+  {
+    "timestamp": 1568909947972,
+    "type": 1,
+    "title": "Added a changelog",
+    "content": "You'll now be notified of new updates."
+  }
+]

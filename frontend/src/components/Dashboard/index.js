@@ -10,6 +10,7 @@ import ConnectedUserProfile from './UserProfile';
 import ConnectedGrades from './Grades';
 import ConnectedGradeBreakdown from './Grades/GradeBreakdown';
 import ConnectedLogout from './Logout';
+import UpdateHandler from './UpdateHandler';
 
 const { Content, Footer } = Layout;
 
@@ -92,9 +93,11 @@ function Dashboard(props) {
               component={ConnectedGradeBreakdown}
             />
             <Route exact path="/dashboard/logout" component={ConnectedLogout} />
+            <Route render={() => <Redirect to="/dashboard" />} />
           </Switch>
         </div>
       </Content>
+      <UpdateHandler />
       <Footer style={{ textAlign: 'center' }}>
         Built by iamtheyammer 2019
       </Footer>
@@ -109,22 +112,3 @@ const ConnectedDashboard = connect(state => ({
 }))(Dashboard);
 
 export default ConnectedDashboard;
-
-/*
-
-avatar_url: "https://dtechhs.instructure.com/images/messages/avatar-50.png"
-bio: null
-calendar: {ics: "https://dtechhs.instructure.com/feeds/calendars/user_DCPxI1aLRwRaIkZ43PjlJqdoaoZIqW9oEyS9JaIa.ics"}
-effective_locale: "en"
-id: 396
-integration_id: null
-locale: null
-login_id: "smendelson21@dtechhs.org"
-lti_user_id: "2faffb2f42d8b058085a456b265d4df3a3dbeabd"
-name: "Sam Mendelson"
-primary_email: "smendelson21@dtechhs.org"
-short_name: "Sam Mendelson"
-sortable_name: "Mendelson, Sam"
-time_zone: "America/Los_Angeles"
-title: null
- */

@@ -36,6 +36,9 @@ function OAuth2Response(props) {
     )
   );
 
+  // set the version to current since it's a new user
+  localStorage.prevVersion = process.env.REACT_APP_CURRENT_VERSION;
+
   notification.success({
     message: 'Success!',
     description: `Welcome, ${
