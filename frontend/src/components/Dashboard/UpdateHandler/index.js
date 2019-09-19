@@ -2,10 +2,11 @@ import React, { useEffect } from 'react';
 import { Typography, List, Modal, Avatar } from 'antd';
 
 import changelog from '../../../assets/changelog';
+import env from '../../../util/env';
 
-function UpdateHandler(props) {
+function UpdateHandler() {
   useEffect(() => {
-    const currentVersion = parseInt(process.env.REACT_APP_CURRENT_VERSION);
+    const currentVersion = parseInt(env.currentVersion);
     // OAuth2Handler sets the current version to equal previous version so that new users
     // don't see a full changelog on first login. Users who were already logged in will see
     // a full changelog, though.

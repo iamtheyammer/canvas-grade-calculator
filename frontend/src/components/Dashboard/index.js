@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Switch, Route, Redirect, Link } from 'react-router-dom';
 import * as ReactGA from 'react-ga';
 
-import { Layout, Breadcrumb } from 'antd';
+import { Layout, Breadcrumb, Popover, Typography } from 'antd';
 
 import DashboardNav from './DashboardNav';
 import ConnectedUserProfile from './UserProfile';
@@ -11,6 +11,7 @@ import ConnectedGrades from './Grades';
 import ConnectedGradeBreakdown from './Grades/GradeBreakdown';
 import ConnectedLogout from './Logout';
 import UpdateHandler from './UpdateHandler';
+import env from '../../util/env';
 
 const { Content, Footer } = Layout;
 
@@ -99,7 +100,14 @@ function Dashboard(props) {
       </Content>
       <UpdateHandler />
       <Footer style={{ textAlign: 'center' }}>
-        Built by iamtheyammer 2019
+        <Popover
+          trigger="click"
+          content={
+            <Typography.Text>Version {env.currentVersion}</Typography.Text>
+          }
+        >
+          Built by iamtheyammer 2019
+        </Popover>
       </Footer>
     </Layout>
   );

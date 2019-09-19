@@ -1,5 +1,7 @@
-export default process.env.NODE_ENV === 'development'
+import env from './env';
+
+export default env.nodeEnv === 'development'
   ? 'http://localhost:8000'
-  : process.env.REACT_APP_DEFAULT_API_URI
-  ? process.env.REACT_APP_DEFAULT_API_URI
+  : env.defaultApiUri
+  ? env.defaultApiUri
   : '';
