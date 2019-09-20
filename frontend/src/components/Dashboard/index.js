@@ -103,7 +103,10 @@ function Dashboard(props) {
         <Popover
           trigger="click"
           content={
-            <Typography.Text>Version {env.currentVersion}</Typography.Text>
+            <Typography.Text>
+              Version {env.currentVersion}
+              {env.nodeEnv === 'development' && '-DEV'}
+            </Typography.Text>
           }
         >
           Built by iamtheyammer 2019

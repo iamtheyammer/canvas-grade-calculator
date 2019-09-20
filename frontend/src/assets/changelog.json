@@ -10,5 +10,11 @@
     "type": 1,
     "title": "Added a changelog",
     "content": "You'll now be notified of new updates."
+  },
+  {
+    "timestamp": 1568940884455,
+    "type": 0,
+    "title": "Removed Invalid Breakdowns",
+    "content": "Removed the See Breakdown link on classes that don't have breakdowns."
   }
 ]

@@ -49,8 +49,13 @@ const tableColumns = [
     key: 'actions',
     render: (text, record) => (
       <div>
-        <Link to={`/dashboard/grades/${record.id}`}>See Breakdown</Link>
-        {' | '}
+        {record.grade !== 'N/A' &&
+          !record.grade.toLowerCase().includes('error') && (
+            <span>
+              <Link to={`/dashboard/grades/${record.id}`}>See Breakdown</Link>
+              {' | '}
+            </span>
+          )}
         <a
           target="_blank"
           rel="noopener noreferrer"
