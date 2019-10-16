@@ -1,7 +1,7 @@
 package canvasapis
 
 import (
-	"github.com/iamtheyammer/canvas-grade-calculator/backend/src/canvasapis/services"
+	"github.com/iamtheyammer/canvas-grade-calculator/backend/src/canvasapis/services/courses"
 	"github.com/iamtheyammer/canvas-grade-calculator/backend/src/util"
 	"github.com/julienschmidt/httprouter"
 	"log"
@@ -15,7 +15,7 @@ func GetCoursesHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Para
 		return
 	}
 
-	resp, body, err := services.GetCourses(rd)
+	resp, body, err := courses.Get(rd)
 	if err != nil {
 		util.SendInternalServerError(w)
 	}
@@ -42,7 +42,7 @@ func GetOutcomesByCourseHandler(w http.ResponseWriter, r *http.Request, ps httpr
 		return
 	}
 
-	resp, body, err := services.GetOutcomesByCourse(rd, courseID)
+	resp, body, err := courses.GetOutcomesByCourse(rd, courseID)
 	if err != nil {
 		util.SendInternalServerError(w)
 		log.Fatal(err)
@@ -82,7 +82,7 @@ func GetOutcomesByCourseAndOutcomeGroupHandler(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	resp, body, err := services.GetOutcomesByCourseAndOutcomeGroup(rd, courseID, outcomeGroupID)
+	resp, body, err := courses.GetOutcomesByCourseAndOutcomeGroup(rd, courseID, outcomeGroupID)
 	if err != nil {
 		util.SendInternalServerError(w)
 		return
@@ -130,7 +130,7 @@ func GetOutcomeResultsByCourseHandler(w http.ResponseWriter, r *http.Request, ps
 		}
 	}
 
-	resp, body, err := services.GetOutcomeResultsByCourse(rd, courseID, userID, includes)
+	resp, body, err := courses.GetOutcomeResultsByCourse(rd, courseID, userID, includes)
 	if err != nil {
 		util.SendInternalServerError(w)
 		return
@@ -178,7 +178,7 @@ func GetOutcomeRollupsByCourseHandler(w http.ResponseWriter, r *http.Request, ps
 		}
 	}
 
-	resp, body, err := services.GetOutcomeRollupsByCourse(rd, courseID, userID, includes)
+	resp, body, err := courses.GetOutcomeRollupsByCourse(rd, courseID, userID, includes)
 	if err != nil {
 		util.SendInternalServerError(w)
 		return
@@ -215,7 +215,7 @@ func GetAssignmentsByCourseHandler(w http.ResponseWriter, r *http.Request, ps ht
 		}
 	}
 
-	resp, body, err := services.GetAssignmentsByCourse(rd, courseID, includes)
+	resp, body, err := courses.GetAssignmentsByCourse(rd, courseID, includes)
 	if err != nil {
 		util.SendInternalServerError(w)
 		return

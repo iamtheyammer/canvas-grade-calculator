@@ -1,12 +1,14 @@
-package services
+package oauth2
 
 import (
+	"github.com/iamtheyammer/canvas-grade-calculator/backend/src/canvasapis/services"
 	"github.com/iamtheyammer/canvas-grade-calculator/backend/src/env"
 	"github.com/iamtheyammer/canvas-grade-calculator/backend/src/util"
 	"net/http"
 )
 
-func GetOAuth2AccessTokenFromRedirectResponse(
+// GetAccessFromRedirectResponse gets an access token from a redirect response
+func GetAccessFromRedirectResponse(
 	code string,
 ) (*http.Response, string, error) {
 	oauth2URL := util.GenerateCanvasURL("/login/oauth2/token", env.OAuth2Subdomain)
@@ -18,10 +20,11 @@ func GetOAuth2AccessTokenFromRedirectResponse(
 	q.Set("code", code)
 	oauth2URL.RawQuery = q.Encode()
 
-	return makePostRequest(oauth2URL.String())
+	return services.MakePostRequest(oauth2URL.String())
 }
 
-func GetOAuth2AccessTokenFromRefreshToken(
+// GetAccessFromRefresh gets an access token from a refresh token
+func GetAccessFromRefresh(
 	rt string,
 ) (*http.Response, string, error) {
 	oauth2URL := util.GenerateCanvasURL("/login/oauth2/token", env.OAuth2Subdomain)
@@ -33,17 +36,5 @@ func GetOAuth2AccessTokenFromRefreshToken(
 	q.Set("refresh_token", rt)
 	oauth2URL.RawQuery = q.Encode()
 
-	return makePostRequest(oauth2URL.String())
-}
-
-func DeleteOAuth2Token(
-	rd *util.RequestDetails,
-) (*http.Response, string, error) {
-	deleteTokenURL := util.GenerateCanvasURL("/login/oauth2/token", env.OAuth2Subdomain)
-
-	q := deleteTokenURL.Query()
-	q.Set("access_token", rd.Token)
-	deleteTokenURL.RawQuery = q.Encode()
-
-	return makeDeleteRequest(deleteTokenURL.String())
+	return services.MakePostRequest(oauth2URL.String())
 }

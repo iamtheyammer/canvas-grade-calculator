@@ -1,7 +1,7 @@
 package canvasapis
 
 import (
-	"github.com/iamtheyammer/canvas-grade-calculator/backend/src/canvasapis/services"
+	"github.com/iamtheyammer/canvas-grade-calculator/backend/src/canvasapis/services/outcomes"
 	"github.com/iamtheyammer/canvas-grade-calculator/backend/src/util"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
@@ -29,7 +29,7 @@ func GetOutcomeByIDHandler(w http.ResponseWriter, r *http.Request, ps httprouter
 		return
 	}
 
-	resp, body, err := services.GetOutcomeByID(rd, outcomeID)
+	resp, body, err := outcomes.GetByID(rd, outcomeID)
 	if err != nil {
 		util.SendInternalServerError(w)
 		return
