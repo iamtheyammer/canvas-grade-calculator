@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func makeAuthenticatedGetRequest(url string, token string) (*http.Response, string, error) {
+func MakeAuthenticatedGetRequest(url string, token string) (*http.Response, string, error) {
 	client := http.Client{}
 
 	req, err := http.NewRequest(http.MethodGet, url, nil)
@@ -31,7 +31,7 @@ func makeAuthenticatedGetRequest(url string, token string) (*http.Response, stri
 	return resp, string(body), nil
 }
 
-func makePostRequest(url string) (*http.Response, string, error) {
+func MakePostRequest(url string) (*http.Response, string, error) {
 	client := http.Client{}
 
 	req, err := http.NewRequest(http.MethodPost, url, nil)
@@ -54,7 +54,7 @@ func makePostRequest(url string) (*http.Response, string, error) {
 	return resp, string(body), nil
 }
 
-func makeDeleteRequest(url string) (* http.Response, string, error) {
+func MakeDeleteRequest(url string) (*http.Response, string, error) {
 	client := http.Client{}
 
 	req, err := http.NewRequest(http.MethodDelete, url, nil)

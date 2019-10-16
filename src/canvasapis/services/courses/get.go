@@ -1,28 +1,32 @@
-package services
+package courses
 
 import (
 	"fmt"
+	"github.com/iamtheyammer/canvas-grade-calculator/backend/src/canvasapis/services"
 	"github.com/iamtheyammer/canvas-grade-calculator/backend/src/util"
 	"net/http"
 )
 
-func GetCourses(rd *util.RequestDetails) (*http.Response, string, error) {
+// Get gets all of a user's courses
+func Get(rd *util.RequestDetails) (*http.Response, string, error) {
 	url := fmt.Sprintf(
 		"https://%s.instructure.com/api/v1/courses",
 		rd.Subdomain,
 	)
-	return makeAuthenticatedGetRequest(url, rd.Token)
+	return services.MakeAuthenticatedGetRequest(url, rd.Token)
 }
 
+// GetOutcomesByCourse gets all outcomes for a specific course
 func GetOutcomesByCourse(rd *util.RequestDetails, courseID string) (*http.Response, string, error) {
 	url := fmt.Sprintf(
 		"https://%s.instructure.com/api/v1/courses/%s/outcome_groups",
 		rd.Subdomain,
 		courseID,
 	)
-	return makeAuthenticatedGetRequest(url, rd.Token)
+	return services.MakeAuthenticatedGetRequest(url, rd.Token)
 }
 
+// GetOutcomesByCourseAndOutcomeGroup gets all outcomes in a course's outcome group
 func GetOutcomesByCourseAndOutcomeGroup(
 	rd *util.RequestDetails,
 	courseID string,
@@ -34,9 +38,10 @@ func GetOutcomesByCourseAndOutcomeGroup(
 		courseID,
 		outcomeGroupID,
 	)
-	return makeAuthenticatedGetRequest(url, rd.Token)
+	return services.MakeAuthenticatedGetRequest(url, rd.Token)
 }
 
+// GetOutcomeResultsByCourse gets outcome results for the specified course
 func GetOutcomeResultsByCourse(
 	rd *util.RequestDetails,
 	courseID string,
@@ -54,10 +59,10 @@ func GetOutcomeResultsByCourse(
 		url = fmt.Sprintf("%s&include[]=%s", url, include)
 	}
 
-	return makeAuthenticatedGetRequest(url, rd.Token)
+	return services.MakeAuthenticatedGetRequest(url, rd.Token)
 }
 
-
+// GetOutcomeRollupsByCourse gets outcome rollups for a specific course
 func GetOutcomeRollupsByCourse(
 	rd *util.RequestDetails,
 	courseID string,
@@ -75,9 +80,10 @@ func GetOutcomeRollupsByCourse(
 		url = fmt.Sprintf("%s&include[]=%s", url, include)
 	}
 
-	return makeAuthenticatedGetRequest(url, rd.Token)
+	return services.MakeAuthenticatedGetRequest(url, rd.Token)
 }
 
+// GetAssignmentsByCourse gets all assignments for a specified course
 func GetAssignmentsByCourse(
 	rd *util.RequestDetails,
 	courseID string,
@@ -93,5 +99,5 @@ func GetAssignmentsByCourse(
 		url = fmt.Sprintf("%s?include[]=%s", url, include)
 	}
 
-	return makeAuthenticatedGetRequest(url, rd.Token)
+	return services.MakeAuthenticatedGetRequest(url, rd.Token)
 }

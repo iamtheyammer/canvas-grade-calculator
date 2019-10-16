@@ -2,7 +2,7 @@ package canvasapis
 
 import (
 	"fmt"
-	"github.com/iamtheyammer/canvas-grade-calculator/backend/src/canvasapis/services"
+	"github.com/iamtheyammer/canvas-grade-calculator/backend/src/canvasapis/services/oauth2"
 	"github.com/iamtheyammer/canvas-grade-calculator/backend/src/env"
 	"github.com/iamtheyammer/canvas-grade-calculator/backend/src/util"
 	"github.com/julienschmidt/httprouter"
@@ -55,7 +55,7 @@ func OAuth2ResponseHandler(w http.ResponseWriter, r *http.Request, _ httprouter.
 		return
 	}
 
-	resp, body, err := services.GetOAuth2AccessTokenFromRedirectResponse(code)
+	resp, body, err := oauth2.GetAccessFromRedirectResponse(code)
 	if err != nil {
 		util.SendInternalServerError(w)
 		return
@@ -72,7 +72,7 @@ func OAuth2RefreshTokenHandler(w http.ResponseWriter, r *http.Request, _ httprou
 		return
 	}
 
-	resp, body, err := services.GetOAuth2AccessTokenFromRefreshToken(refreshToken)
+	resp, body, err := oauth2.GetAccessFromRefresh(refreshToken)
 	if err != nil {
 		util.SendInternalServerError(w)
 		return
@@ -90,7 +90,7 @@ func DeleteOAuth2TokenHandler(w http.ResponseWriter, r *http.Request, _ httprout
 		return
 	}
 
-	resp, body, err := services.DeleteOAuth2Token(rd)
+	resp, body, err := oauth2.Delete(rd)
 	if err != nil {
 		util.SendInternalServerError(w)
 		return
