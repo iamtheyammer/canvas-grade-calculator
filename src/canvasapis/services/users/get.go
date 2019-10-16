@@ -15,4 +15,3 @@ func GetSelfProfile(rd *util.RequestDetails) (*http.Response, string, error) {
 	)
 	return services.MakeAuthenticatedGetRequest(url, rd.Token)
 }
-

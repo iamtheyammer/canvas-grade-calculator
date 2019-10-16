@@ -54,7 +54,7 @@ func MakePostRequest(url string) (*http.Response, string, error) {
 	return resp, string(body), nil
 }
 
-func MakeDeleteRequest(url string) (* http.Response, string, error) {
+func MakeDeleteRequest(url string) (*http.Response, string, error) {
 	client := http.Client{}
 
 	req, err := http.NewRequest(http.MethodDelete, url, nil)

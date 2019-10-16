@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-var HTTPPort = fmt.Sprintf(":%s",  getEnv("PORT", "8000"))
+var HTTPPort = fmt.Sprintf(":%s", getEnv("PORT", "8000"))
 
 var ShouldServeStatic = getEnv("CANVAS_PROXY_SERVE_STATIC", "false")
 
