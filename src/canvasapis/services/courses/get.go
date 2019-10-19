@@ -33,7 +33,7 @@ func GetOutcomesByCourseAndOutcomeGroup(
 	outcomeGroupID string,
 ) (*http.Response, string, error) {
 	url := fmt.Sprintf(
-		"https://%s.instructure.com/api/v1/courses/%s/outcome_groups/%s/outcomes",
+		"https://%s.instructure.com/api/v1/courses/%s/outcome_groups/%s/outcomes?per_page=100",
 		rd.Subdomain,
 		courseID,
 		outcomeGroupID,
@@ -49,7 +49,7 @@ func GetOutcomeResultsByCourse(
 	include string,
 ) (*http.Response, string, error) {
 	url := fmt.Sprintf(
-		"https://%s.instructure.com/api/v1/courses/%s/outcome_results?user_ids[]=%s",
+		"https://%s.instructure.com/api/v1/courses/%s/outcome_results?user_ids[]=%s&per_page=100",
 		rd.Subdomain,
 		courseID,
 		userID,
@@ -70,7 +70,7 @@ func GetOutcomeRollupsByCourse(
 	include string,
 ) (*http.Response, string, error) {
 	url := fmt.Sprintf(
-		"https://%s.instructure.com/api/v1/courses/%s/outcome_rollups?user_ids[]=%s",
+		"https://%s.instructure.com/api/v1/courses/%s/outcome_rollups?user_ids[]=%s&per_page=100",
 		rd.Subdomain,
 		courseID,
 		userID,
@@ -90,13 +90,13 @@ func GetAssignmentsByCourse(
 	include string,
 ) (*http.Response, string, error) {
 	url := fmt.Sprintf(
-		"https://%s.instructure.com/api/v1/courses/%s/assignments",
+		"https://%s.instructure.com/api/v1/courses/%s/assignments?per_page=100",
 		rd.Subdomain,
 		courseID,
 	)
 
 	if len(include) > 1 {
-		url = fmt.Sprintf("%s?include[]=%s", url, include)
+		url = fmt.Sprintf("%s&include[]=%s", url, include)
 	}
 
 	return services.MakeAuthenticatedGetRequest(url, rd.Token)
