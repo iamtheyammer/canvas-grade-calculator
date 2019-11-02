@@ -10,7 +10,7 @@ install: cd frontend && npm ci && cd ..
 script: make ci
 
 # sets the CNAME file so github continues serving canvascbl.com
-before_deploy: export REACT_APP_CURRENT_VERSION=`NODE_DISABLE_COLORS=1 node -e 'console.log(Date.now())'` && echo "canvascbl.com" > bin/build/CNAME
+before_deploy: export REACT_APP_CURRENT_VERSION=`NODE_DISABLE_COLORS=1 node -e 'console.log(Date.now())'`
 
 deploy:
   provider: pages
