@@ -67,21 +67,21 @@ function getGradeFromOutcomes(outcomes) {
 }
 
 export const gradeMap = [
-  ['A', [3.5, 3]],
-  ['A-', [3.5, 2.5]],
-  ['B+', [3, 2.5]],
-  ['B', [3, 2.25]],
-  ['B-', [3, 2]],
-  ['C', [2.5, 2]],
+  ['A', [3.3, 3]],
+  ['A-', [3.3, 2.5]],
+  ['B+', [2.6, 2.5]],
+  ['B', [2.6, 2.25]],
+  ['B-', [2.6, 2.0]],
+  ['C', [2.2, 0]],
   ['I', [0, 0]]
 ];
 
 export const gradeMapByGrade = {
-  A: { max: 3.5, min: 3 },
-  'A-': { max: 3.5, min: 2.5 },
-  'B+': { max: 3, min: 2.5 },
-  B: { max: 3, min: 2.25 },
-  'B-': { max: 3, min: 2 },
-  C: { max: 2.5, min: 2 },
+  A: { max: 3.3, min: 3 },
+  'A-': { max: 3.3, min: 2.5 },
+  'B+': { max: 2.6, min: 2.5 },
+  B: { max: 2.6, min: 2.25 },
+  'B-': { max: 2.6, min: 2 },
+  C: { max: 2.2, min: 2 },
   I: { max: 0, min: 0 }
 };
