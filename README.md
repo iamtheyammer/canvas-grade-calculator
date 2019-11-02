@@ -1,6 +1,6 @@
 # canvas-grade-calculator
 
-Calculates Grades for CBL courses on [Instructure Canvas](https://github.com/instructure/canvas-lms).
+Calculates Grades for CBL courses on [Instructure Canvas](https://github.com/instructure/canvas-lms). Note that this repository no longer powers [canvascbl.com](https://canvascbl.com).
 
 [![Build Status](https://travis-ci.com/iamtheyammer/canvas-grade-calculator.svg?branch=master)](https://travis-ci.com/iamtheyammer/canvas-grade-calculator)
 
