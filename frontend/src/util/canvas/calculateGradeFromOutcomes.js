@@ -116,8 +116,8 @@ export const gradeMap = [
   ['A', [3.3, 3]],
   ['A-', [3.3, 2.5]],
   ['B+', [2.6, 2.5]],
-  ['B', [2.6, 2.25]],
-  ['B-', [2.6, 2.0]],
+  ['B', [2.6, 0]],
+  ['B-', [2.6, 0]],
   ['C', [2.2, 0]],
   ['I', [0, 0]]
 ];
@@ -126,8 +126,8 @@ export const gradeMapByGrade = {
   A: { rank: 6, max: 3.3, min: 3 },
   'A-': { rank: 5, max: 3.3, min: 2.5 },
   'B+': { rank: 4, max: 2.6, min: 2.5 },
-  B: { rank: 3, max: 2.6, min: 2.25 },
-  'B-': { rank: 2, max: 2.6, min: 2 },
-  C: { rank: 1, max: 2.2, min: 2 },
+  B: { rank: 3, max: 2.6, min: 0 },
+  'B-': { rank: 2, max: 2.6, min: 0 },
+  C: { rank: 1, max: 2.2, min: 0 },
   I: { rank: 0, max: 0, min: 0 }
 };
