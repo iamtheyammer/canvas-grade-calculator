@@ -41,7 +41,7 @@ function OutcomeInfo(props) {
   const { lowestOutcome, outcomeRollupScores, grade } = props;
 
   const { min: AMin, max: AMax } = gradeMapByGrade['A'];
-  const seventyFivePercentOfOutcomes = Math.round(
+  const seventyFivePercentOfOutcomes = Math.floor(
     (75 * outcomeRollupScores.length) / 100
   );
 

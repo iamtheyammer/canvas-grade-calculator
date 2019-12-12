@@ -33,6 +33,7 @@ import ConnectedErrorModal from '../../ErrorModal';
 import { ReactComponent as PopOutIcon } from '../../../../assets/pop_out.svg';
 
 import OutcomeInfo from './OutcomeInfo';
+import isSuccessSkillsOutcome from '../../../../util/canvas/isSuccessSkillsOutcome';
 
 const outcomeTableColumns = [
   {
@@ -42,7 +43,13 @@ const outcomeTableColumns = [
     sorter: (a, b) => desc(a.name, b.name),
     render: (text, item) => (
       <div>
-        <Typography.Text>{text}</Typography.Text>
+        <Typography.Text
+          delete={
+            isSuccessSkillsOutcome(text) && item.gradeHasSuccessSkills === false
+          }
+        >
+          {text}
+        </Typography.Text>
         <span style={{ width: '7px', display: 'inline-block' }} />
         {item.timesAssessed < 4 && (
           <Popover
@@ -318,6 +325,7 @@ function GradeBreakdown(props) {
       o => o.id === parseInt(rs.links.outcome)
     )[0];
     return {
+      gradeHasSuccessSkills: grade.hasSuccessSkills,
       name: outcome.display_name || outcome.title,
       score: rs.score,
       lastAssignment: rs.title,
@@ -360,7 +368,12 @@ function GradeBreakdown(props) {
             </div>
             <Typography.Text>
               Your current grade, {grade.grade}, requires 75% of outcomes to be
-              above {max} and no outcomes to be below {min}.
+              above {max} and no outcomes to be below {min}.{' '}
+              {grade.hasSuccessSkills === true
+                ? 'Success skills were counted because they improved your grade.'
+                : grade.hasSuccessSkills === false
+                ? 'Success skills were not counted because they lowered your grade.'
+                : 'Your grade is identical with and without success skills.'}
             </Typography.Text>
           </Card>
         </Col>

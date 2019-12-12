@@ -1,3 +1,5 @@
+import isSuccessSkillsOutcome from './isSuccessSkillsOutcome';
+
 export default outcomeRollups => {
   const courseIds = Object.keys(outcomeRollups);
 
@@ -9,8 +11,52 @@ export default outcomeRollups => {
     // array of outcomes for a specified class
     const scores = rollup[0].scores.map(s => s.score);
 
-    grades[i] =
-      scores.length > 0 ? getGradeFromOutcomes(scores) : { grade: 'N/A' };
+    if (scores.length < 1) {
+      grades[i] = { grade: 'N/A' };
+      return;
+    }
+
+    // scores without ones from success skills outcomes
+    const noSuccessSkillsScores = rollup[0].scores
+      .filter(s => !isSuccessSkillsOutcome(s.title))
+      .map(s => s.score);
+
+    // grade with success skills included
+    const successSkillsGrade = getGradeFromOutcomes(scores);
+    const successSkillsGradeRank = gradeMapByGrade[successSkillsGrade.grade];
+
+    // grade without success skills
+    const noSuccessSkillsGrade = getGradeFromOutcomes(noSuccessSkillsScores);
+    const noSuccessSkillsGradeRank =
+      gradeMapByGrade[noSuccessSkillsGrade.grade];
+
+    // if the no success skills grade is better, use that one
+    if (noSuccessSkillsGradeRank > successSkillsGradeRank) {
+      grades[i] = {
+        ...noSuccessSkillsGrade,
+        rank: noSuccessSkillsGradeRank,
+        hasSuccessSkills: false,
+        ifOppositeSuccessSkills: successSkillsGrade
+      };
+      return;
+    }
+
+    // if the success skills one is better, use that one
+    if (successSkillsGradeRank > noSuccessSkillsGradeRank) {
+      grades[i] = {
+        ...successSkillsGrade,
+        rank: successSkillsGradeRank,
+        hasSuccessSkills: true,
+        ifOppositeSuccessSkills: noSuccessSkillsGrade
+      };
+      return;
+    }
+
+    // they must be equal
+    grades[i] = {
+      ...successSkillsGrade,
+      rank: successSkillsGradeRank
+    };
   });
 
   return grades;
@@ -20,7 +66,7 @@ function getGradeFromOutcomes(outcomes) {
   // outcomes, ex: [1,2,3,4]
 
   // what is 75% of outcomes.length
-  const outcomesOverMinNeeded = Math.ceil((75 * outcomes.length) / 100);
+  const outcomesOverMinNeeded = Math.floor((75 * outcomes.length) / 100);
 
   // desc
   const sortedOutcomes = outcomes.sort((a, b) => b - a);
@@ -77,11 +123,11 @@ export const gradeMap = [
 ];
 
 export const gradeMapByGrade = {
-  A: { max: 3.3, min: 3 },
-  'A-': { max: 3.3, min: 2.5 },
-  'B+': { max: 2.6, min: 2.5 },
-  B: { max: 2.6, min: 2.25 },
-  'B-': { max: 2.6, min: 2 },
-  C: { max: 2.2, min: 2 },
-  I: { max: 0, min: 0 }
+  A: { rank: 6, max: 3.3, min: 3 },
+  'A-': { rank: 5, max: 3.3, min: 2.5 },
+  'B+': { rank: 4, max: 2.6, min: 2.5 },
+  B: { rank: 3, max: 2.6, min: 2.25 },
+  'B-': { rank: 2, max: 2.6, min: 2 },
+  C: { rank: 1, max: 2.2, min: 2 },
+  I: { rank: 0, max: 0, min: 0 }
 };

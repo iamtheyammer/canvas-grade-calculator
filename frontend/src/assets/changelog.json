@@ -16,5 +16,11 @@
     "type": 0,
     "title": "Removed Invalid Breakdowns",
     "content": "Removed the See Breakdown link on classes that don't have breakdowns."
+  },
+  {
+    "timestamp": 1576004921578,
+    "type": 0,
+    "title": "Updated the grade calculation algorithm",
+    "content": "Success skills are now optional, and 75% (of the number of outcomes) is now rounded down instead of up."
   }
 ]
